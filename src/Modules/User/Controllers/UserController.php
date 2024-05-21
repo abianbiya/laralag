@@ -22,7 +22,7 @@ class UserController extends Controller
 
 	public function index(Request $request)
 	{
-		$query = User::query();
+		$query = User::with('roleUser.role', 'roleUser.scope');
 		if($request->has('search')){
 			$search = $request->get('search');
 			$query->whereAny(['Username', 'Email', 'Name', 'Email Verified At', 'Password', 'Identitas', 'Remember Token', ], 'like', "%$search%");

@@ -2,6 +2,7 @@
 
 namespace Abianbiya\Laralag\Modules\User\Models;
 
+use Abianbiya\Laralag\Modules\RoleUser\Models\RoleUser;
 use Abianbiya\Laralag\Traits\HasPermissions;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
@@ -39,5 +40,9 @@ class User extends Model
 		});
 	}
 
+	public function roleUser()
+	{
+		return $this->hasMany(RoleUser::class,'user_id','id');
+	}
 	
 }

@@ -1,16 +1,15 @@
 <?php
 namespace Abianbiya\Laralag\Modules\RoleUser\Controllers;
 
-use Form;
-use Abianbiya\Laralag\Models\User;
-use Abianbiya\Laralag\Helpers\Logger;
 use Illuminate\Http\Request;
-use Abianbiya\Laralag\Modules\Log\Models\Log;
-use Abianbiya\Laralag\Modules\Role\Models\Role;
-use Abianbiya\Laralag\Modules\Scope\Models\Scope;
-
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Abianbiya\Laralag\Helpers\Logger;
+use Abianbiya\Laralag\Modules\Log\Models\Log;
+
+use Abianbiya\Laralag\Modules\Role\Models\Role;
+use Abianbiya\Laralag\Modules\User\Models\User;
+use Abianbiya\Laralag\Modules\Scope\Models\Scope;
 use Abianbiya\Laralag\Modules\RoleUser\Models\RoleUser;
 
 class RoleUserController extends Controller
@@ -136,6 +135,9 @@ class RoleUserController extends Controller
 
 	public function destroy(Request $request, $id)
 	{
+		// $roleuser = RoleUser::whereUserId($userId)->whereRoleId($roleId)->when($request->filled('scopeId'), function($q){
+		// 	$q->where('scope_id', request('scopeId'));
+		// })->first();
 		$roleuser = RoleUser::find($id);
 		$roleuser->delete();
 

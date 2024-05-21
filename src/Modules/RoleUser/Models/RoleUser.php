@@ -13,7 +13,7 @@ use Abianbiya\Laralag\Modules\Scope\Models\Scope;
 
 class RoleUser extends Model
 {
-
+	use SoftDeletes, HasUuids;
 	protected $table      = 'role_user';
 	protected $fillable   = ['role_id','user_id','scope_id'];
 

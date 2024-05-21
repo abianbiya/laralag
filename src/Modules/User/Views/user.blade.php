@@ -32,6 +32,7 @@
 			    <th scope="col">Email</th>
 			    <th scope="col">Name</th>
 			    <th scope="col">Nomor Identitas</th>
+			    <th scope="col">Level</th>
 			    <th scope="col">Opsi</th>
             </tr>
         <tbody>
@@ -44,9 +45,16 @@
 				<td>{{ $item->name }}</td>
 				<td>{{ $item->identitas }}</td>
 				<td>
+                    @foreach ($item->roleUser as $roleUser)
+                        <span class="badge bg-primary">{{ $roleUser->role->nama }} {{ $roleUser->scope ? '('.$roleUser->scope->nama.')' : '' }}</span>
+                    @endforeach
+                </td>
+				<td>
                     {{ actionButton('user.show', $item->id, $title) }}
                     {{ actionButton('user.edit', $item->id, $title) }}
-                    {{ actionButton('user.destroy', $item->id, $title) }}
+                    @if($item->id != auth()->id() && $item->email != 'admin@mail.com')
+                        {{ actionButton('user.destroy', $item->id, $title) }}
+                    @endif
 
                     {{-- untuk custom button dapat menggunakan fungsi di bawah atau menggunakan fungsi laravel-html  --}}
                     {{-- {{ customButton('user.blabla', $item->id, $title, 'bi bi-info-square', 'btn-outline-primary') }} --}}

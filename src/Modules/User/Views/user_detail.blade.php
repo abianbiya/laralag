@@ -26,13 +26,13 @@
                 </tr>
                 <tr>
                     <th width='25%''>Level Akses</th>
-                    <td>
-                        @if(count($user->role) > 0)
+                <td>    
+                        @if(count($user->roles) > 0)
                             <ul class="list-group">
                                 @foreach($user->roleUser as $role)
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
                                         {{ $role->role->nama }} {{ $role->scope ? "(".$role->scope->nama.")" : '' }}
-                                        <a href="{{ route('roleuser.destroy', ['roleuser' => $role->role->id, 'back' => 'user.index']) }}" class="btn btn-sm btn-danger"> <i class="bi bi-trash"></i> </a>
+                                        <a href="{{ route('roleuser.destroy', [$role->id]) }}" class="btn btn-sm btn-danger"> <i class="bi bi-trash"></i> </a>
                                     </li>
                                 @endforeach
                             </ul>
