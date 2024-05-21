@@ -50,7 +50,7 @@
                 </tr>
                 @forelse ($menuGroup->menu->sortBy('urutan') as $key => $item)
                 <tr>
-                    <td class="text-center">{{ ($key+1) }}</td>
+                    <td class="text-center">{{ $item->urutan }}</td>
                     <td>{{ $item->nama }}</td>
                     {{-- <td>{{ $item->nama_en }}</td> --}}
                     <td><i class="{{ $item->icon }}"></i> {{ $item->icon }}</td>
@@ -72,7 +72,7 @@
                             {!! $module->is_tampil ? '<i class="bi bi-eye text-success"></i>' : '<i class="bi bi-eye-slash text-danger"></i>' !!}
                         </td>
                         <td>
-                            {{ actionButton('module.edit', $module->id, $title) }}
+                            {{ actionButton('module.edit', [$module->id, 'back' => 'menu.index'], $title) }}
                             {{ actionButton('module.destroy', $item->id, $title) }}
                         </td>
                     </tr>

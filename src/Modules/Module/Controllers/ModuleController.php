@@ -93,7 +93,7 @@ class ModuleController extends Controller
 	{
 		$data['module'] = $module;
 
-		$ref_menu = Menu::all()->pluck('menu_group_id','id');
+		$ref_menu = Menu::all()->pluck('nama','id');
 		$ref_is_tampil = ["1" => "Ya", "0" => "Tidak"];
 		
 		$data['forms'] = array(

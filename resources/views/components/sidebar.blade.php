@@ -48,10 +48,10 @@
                                     </li>
                                 @else
                                     <li class="nav-item">
-                                        <a class="nav-link menu-link" href="#sidebarPages" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarPages">
+                                        <a class="nav-link menu-link" href="#{{ str($menu->nama)->slug() }}" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="{{ str($menu->nama)->slug() }}">
                                             <i class="{{ $menu->icon }}"></i> <span data-key="t-pages">{{ $menu->nama }}</span>
                                         </a>
-                                        <div class="collapse menu-dropdown" id="sidebarPages">
+                                        <div class="collapse menu-dropdown" id="{{ str($menu->nama)->slug() }}">
                                             <ul class="nav nav-sm flex-column">
                                                 @foreach ($menu->module->where('is_tampil', 1) as $module)
                                                     <li class="nav-item">

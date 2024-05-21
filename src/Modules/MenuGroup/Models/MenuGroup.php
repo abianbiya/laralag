@@ -41,7 +41,7 @@ class MenuGroup extends Model
 
 	public function menu()
 	{
-		return $this->hasMany(Menu::class,"menu_group_id","id");
+		return $this->hasMany(Menu::class,"menu_group_id","id")->orderBy('urutan');
 	}
 	
 }
