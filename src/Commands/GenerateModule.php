@@ -2,13 +2,13 @@
 
 namespace Abianbiya\Laralag\Commands;
 
-use Abianbiya\Laralag\Models\Permission;
 use Illuminate\Support\Str;
 use Illuminate\Console\Command;
-use Abianbiya\Laralag\Modules\Menu\Models\Menu;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Artisan;
+use Abianbiya\Laralag\Modules\Menu\Models\Menu;
+use Abianbiya\Laralag\Modules\Permission\Models\Permission;
 
 class GenerateModule extends Command
 {
@@ -35,7 +35,7 @@ class GenerateModule extends Command
         $this->module = $module;
         $this->generate($module);
 
-        // $this->createMenuAndPermissions($module);
+        $this->createMenuAndPermissions($module);
 
         $withApi = $this->option('api');
         if ($withApi) {
@@ -57,16 +57,47 @@ class GenerateModule extends Command
             'destroy' => "$moduleName.destroy"
         ];
 
+        $group = $moduleName;
+        $nama = '';
         // Example of how to insert permissions into a database (assuming you have a Permission model)
         foreach ($permissions as $action => $permName) {
             // Check if permission exists, if not, create it
+            switch ($action) {
+                case 'index':
+                     $nama = 'Melihat daftar ' . $group;
+                    break;
+                case 'create':
+                     $nama = 'Menampilkan form tambah ' . $group;
+                    break;
+                case 'show':
+                     $nama = 'Menampilkan detail ' . $group;
+                    break;
+                case 'store':
+                     $nama = 'Menyimpan form tambah ' . $group;
+                    break;
+                case 'edit':
+                     $nama = 'Menampilkan form edit ' . $group;
+                    break;
+                case 'update':
+                     $nama = 'Menyimpan form edit ' . $group;
+                    break;
+                case 'destroy':
+                     $nama = 'Menghapus ' . $group;
+                    break;
+                case 'menu':
+                     $nama = 'Menampilkan menu ' . $group;
+                    break;
+                default:
+                     $nama = $action . ' ' . $group;
+                    break;
+            }
             Permission::firstOrCreate([
-                'name' => $permName
+                'slug' => $permName
             ], [
-                'description' => "Permission to $action $moduleName"
+                'nama' => $nama,
+                'group' => $group,
+                'action' => $action
             ]);
-
-            // Optionally, create menu items or whatever else is needed here
         }
 
         // Optionally link these permissions to a menu item if --menu was specified
