@@ -383,10 +383,10 @@ class GenerateModule extends Command
                 $label = str_replace('_id', '', $value);
                 $value = Str::camel($label) . "->id";
             }
-            $labelData = "<th width='25%''>" . str_replace('_', ' ', Str::title($label)) . "</th>\n";
-            $valueData = "<td>{{ $" . strtolower($class) . "->$value }}</td>";
+            $labelData = "<th width='25%'>" . str_replace('_', ' ', Str::title($label)) . "</th>\n";
+            $valueData = "                  <td>{{ $" . strtolower($class) . "->$value }}</td>";
             $detailData .= "<tr>
-                    ".$labelData . $valueData . "\n</tr>" . PHP_EOL . "				";
+                    ".$labelData . $valueData . "\n             </tr>" . PHP_EOL . "				";
         }
 
         $stub = str_replace('NamaModule', strtolower($class), $stub);

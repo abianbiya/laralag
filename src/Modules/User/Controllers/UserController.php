@@ -40,6 +40,7 @@ class UserController extends Controller
 			'username' => ['Username', html()->text("username", old("username"))->class("form-control")->placeholder("")->required()],
             'email' => ['Email', html()->text("email", old("email"))->class("form-control")->placeholder("")->required()],
             'name' => ['Name', html()->text("name", old("name"))->class("form-control")->placeholder("")->required()],
+			'password' => ['Password', html()->text("password", '')->class("form-control")->placeholder("")],
             'identitas' => ['Nomor Identitas', html()->text("identitas", old("identitas"))->class("form-control")->placeholder("")],
 		);
 
