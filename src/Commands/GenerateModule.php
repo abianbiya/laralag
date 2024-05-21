@@ -313,7 +313,7 @@ class GenerateModule extends Command
         foreach ($this->fields as $value) {
             if (Str::endsWith($value, '_id')) {
                 $model = Str::studly(Str::replace('_id', '', $value));
-                $namespaceRelationalTabel .= "use Abianbiya\Laralag\Modules\\" . $model . "\Models\\" . $model . ";" . PHP_EOL;
+                $namespaceRelationalTabel .= "use App\Modules\\" . $model . "\Models\\" . $model . ";" . PHP_EOL;
                 $relationalTabel .= 'public function ' . Str::camel($model) . '(){
 		return $this->belongsTo(' . $model . '::class,"' . $value . '","id");
 	}' . PHP_EOL;

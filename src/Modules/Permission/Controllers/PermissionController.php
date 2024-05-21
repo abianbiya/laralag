@@ -41,6 +41,7 @@ class PermissionController extends Controller
 			'slug' => ['Slug', html()->text("slug", old("slug"))->class("form-control")->placeholder("")->required()],
             'nama' => ['Nama', html()->text("nama", old("nama"))->class("form-control")->placeholder("")],
             'action' => ['Action', html()->text("action", old("action"))->class("form-control")->placeholder("")],
+            'group' => ['Group', html()->text("group", old("group"))->class("form-control")->placeholder("")],
             
 		);
 
@@ -54,6 +55,7 @@ class PermissionController extends Controller
 			'slug' => 'required|string',
 			'nama' => 'nullable|string',
 			'action' => 'nullable|string',
+			'group' => 'nullable|string',
 			
 		]);
 
@@ -61,6 +63,7 @@ class PermissionController extends Controller
 		$permission->slug = $request->input("slug");
         $permission->nama = $request->input("nama");
         $permission->action = $request->input("action");
+        $permission->group = $request->input("group");
         $permission->save();
 
 		$text = 'membuat '.$this->title; //' baru '.$permission->what;
@@ -86,6 +89,7 @@ class PermissionController extends Controller
 			'slug' => ['Slug', html()->text("slug", $permission->slug)->class("form-control")->placeholder("")->required()],
             'nama' => ['Nama', html()->text("nama", $permission->nama)->class("form-control")->placeholder("")],
             'action' => ['Action', html()->text("action", $permission->action)->class("form-control")->placeholder("")],
+            'group' => ['Group', html()->text("group", $permission->group)->class("form-control")->placeholder("")],
             
 		);
 
@@ -100,6 +104,7 @@ class PermissionController extends Controller
 			'slug' => 'required|string',
 			'nama' => 'nullable|string',
 			'action' => 'nullable|string',
+			'group' => 'nullable|string',
 			
 		]);
 		
@@ -107,6 +112,7 @@ class PermissionController extends Controller
 		$permission->slug = $request->input("slug");
         $permission->nama = $request->input("nama");
         $permission->action = $request->input("action");
+        $permission->group = $request->input("group");
         $permission->save();
 
 
