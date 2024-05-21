@@ -28,6 +28,10 @@ class LaralagInstall extends Command
 	{
 		$this->info('Installing Laralag CRUD Generator...');
 
+		// Run migrations
+		Artisan::call('migrate');
+		$this->info('Ran migrations.');
+
 		// Publish assets
 		$this->call('vendor:publish', [
 			'--tag' => 'laralag_assets',
@@ -43,15 +47,11 @@ class LaralagInstall extends Command
 		$this->info('Copied config.');
 
 		// Publish Modules
-		$this->call('vendor:publish', [
-			'--tag' => 'laralag_modules',
-			'--force' => true,
-		]);
-		$this->info('Copied modules.');
-
-		// Run migrations
-		// Artisan::call('migrate');
-		// $this->info('Ran migrations.');
+		// $this->call('vendor:publish', [
+		// 	'--tag' => 'laralag_modules',
+		// 	'--force' => true,
+		// ]);
+		// $this->info('Copied modules.');
 
 		// // Run seeders
 		Artisan::call('lag:seed');
