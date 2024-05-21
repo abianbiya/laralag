@@ -35,7 +35,7 @@ class Login extends Component
 
         if (Auth::attempt($user)) {
             $user = Auth::user();
-            if($user->roles) {
+            if(count($user->roles) < 1) {
                 Auth::logout();
                 $this->addError('email', 'User does not have any role assigned. Please contact support.');
                 return redirect()->back();
