@@ -18,6 +18,8 @@ php artisan lag:install
 ```
 then add the `HasUuids` and `HasPermissions` traits to your app/Models/User.php
 ```php
+use Abianbiya\Laralag\Traits\HasPermissions;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class User extends Authenticatable
 {
