@@ -99,22 +99,6 @@ class ModuleTableSeeder extends Seeder
                 'updated_by' => NULL,
                 'deleted_by' => NULL,
             ),
-            6 => 
-            array (
-                'id' => '9c00b9ef-23d2-426e-8de0-35ad491c46b9',
-                'menu_id' => '9c00b9cf-2f30-4053-83f4-f40597cbc12e',
-                'nama' => 'Post',
-                'routing' => 'post.index',
-                'permission' => 'post.index',
-                'urutan' => 1,
-                'is_tampil' => 1,
-                'created_at' => '2024-05-09 15:42:13',
-                'updated_at' => '2024-05-09 15:42:13',
-                'deleted_at' => NULL,
-                'created_by' => '9bfeaabc-c71a-442b-8bbb-8b76194ab72d',
-                'updated_by' => NULL,
-                'deleted_by' => NULL,
-            ),
             7 => 
             array (
                 'id' => '9c148b47-92d1-4078-b36c-dd89f95770ce',
