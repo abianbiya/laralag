@@ -1,10 +1,9 @@
-# Very short description of the package
+# Simple CRUD Generator and Starter Access Management
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/abianbiya/laralag.svg?style=flat-square)](https://packagist.org/packages/abianbiya/laralag)
 [![Total Downloads](https://img.shields.io/packagist/dt/abianbiya/laralag.svg?style=flat-square)](https://packagist.org/packages/abianbiya/laralag)
-![GitHub Actions](https://github.com/abianbiya/laralag/actions/workflows/main.yml/badge.svg)
 
-This is where your description should go. Try and limit it to a paragraph or two, and maybe throw in a mention of what PSRs you support to avoid any confusion with users and contributors.
+This package adds ability to generate CRUD based on the table and manage access users and roles.
 
 ## Installation
 
@@ -13,12 +12,28 @@ You can install the package via composer:
 ```bash
 composer require abianbiya/laralag
 ```
+and then run
+```bash
+php artisan lag:install
+```
+then add the `HasUuids` and `HasPermissions` traits to your app/Models/User.php
+```php
+
+class User extends Authenticatable
+{
+    use HasFactory, Notifiable, HasUuids, HasPermissions;
+	// rest of the code
+```
+and you are ready.
 
 ## Usage
-
-```php
-// Usage description here
+### Generating the CRUD
+1. Make the migration and do migrate
+2. Run artisan make module with the table name in StudlyCase
+```bash
+php artisan make:module Post
 ```
+
 
 ### Testing
 
@@ -41,7 +56,6 @@ If you discover any security related issues, please email mail.anbiya@gmail.com 
 ## Credits
 
 -   [Abi Anbiya](https://github.com/abianbiya)
--   [All Contributors](../../contributors)
 
 ## License
 
