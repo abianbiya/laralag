@@ -130,6 +130,9 @@ class LaralagServiceProvider extends ServiceProvider
     public function appModuleLoader()
     {
         $modulepath = app_path('Modules');
+        if(!is_dir($modulepath)) {
+            return;
+        }
         $modules = File::directories($modulepath);
 
         foreach ($modules as $module) {
