@@ -49,7 +49,7 @@
                                 @else
                                     <li class="nav-item">
                                         <a class="nav-link menu-link" href="#sidebarPages" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarPages">
-                                            <i class="bi bi-journal-medical"></i> <span data-key="t-pages">{{ $menu->nama }}</span>
+                                            <i class="{{ $menu->icon }}"></i> <span data-key="t-pages">{{ $menu->nama }}</span>
                                         </a>
                                         <div class="collapse menu-dropdown" id="sidebarPages">
                                             <ul class="nav nav-sm flex-column">
