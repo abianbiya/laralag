@@ -1,0 +1,63 @@
+{
+    "name": "abianbiya/laralag",
+    "description": "Laralag CRUD Generator and Starter Access Management",
+    "keywords": [
+        "abianbiya",
+        "laralag"
+    ],
+    "homepage": "https://github.com/abianbiya/laralag",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Abi Anbiya",
+            "email": "mail.anbiya@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "laravel/framework": "^11.0",
+        "spatie/laravel-backup": "^8.4",
+        "laravel/breeze": "^2.0",
+        "laravel/tinker": "^2.9",
+        "livewire/livewire": "^3.4",
+        "livewire/volt": "^1.0",
+        "spatie/laravel-html": "^3.7"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^6.0",
+        "phpunit/phpunit": "^9.0"
+    },
+    "autoload": {
+        "files": [
+            "src/Helpers/AutoloadHelper.php"
+        ],
+        "psr-4": {
+            "Abianbiya\\Laralag\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Abianbiya\\Laralag\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Abianbiya\\Laralag\\LaralagServiceProvider"
+            ],
+            "aliases": {
+                "Laralag": "Abianbiya\\Laralag\\LaralagFacade"
+            }
+        }
+    }
+}

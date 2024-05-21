@@ -1,0 +1,14 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use DummyClass;
+
+Route::controller(KelasController::class)->middleware(['web','auth'])->group(function(){
+	Route::get('/selug', 'index')->name('selug.index')->middleware('permission:selug.index');
+	Route::get('/selug/create', 'create')->name('selug.create')->middleware('permission:selug.create');
+	Route::post('/selug', 'store')->name('selug.store')->middleware('permission:selug.store');
+	Route::get('/selug/{selug}', 'show')->name('selug.show')->middleware('permission:selug.show');
+	Route::get('/selug/{selug}/edit', 'edit')->name('selug.edit')->middleware('permission:selug.edit');
+	Route::patch('/selug/{selug}', 'update')->name('selug.update')->middleware('permission:selug.update');
+	Route::get('/selug/{selug}/delete', 'destroy')->name('selug.destroy')->middleware('permission:selug.destroy');
+});

@@ -1,0 +1,108 @@
+<?php
+namespace DummyNamespace;
+
+use Illuminate\Http\Request;
+use App\Modules\Kelas\Models\Kelas;
+use App\Http\Controllers\Controller;
+use Abianbiya\Laralag\Helpers\Logger;
+use Abianbiya\Laralag\Modules\Log\Models\Log;
+//ImportReference//
+
+class DummyClass extends Controller
+{
+	use Logger;
+	protected $log;
+	protected $title = "Title";
+	
+	public function __construct(Log $log)
+	{
+		$this->log = $log;
+	}
+
+	public function index(Request $request)
+	{
+		$query = Kelas::query();
+		if($request->has('search')){
+			$search = $request->get('search');
+			$query->whereAny([SearchableColumn], 'like', "%$search%");
+		}
+		$data['data'] = $query->paginate(10)->withQueryString();
+
+		$this->log($request, 'melihat halaman manajemen data '.$this->title);
+		return view('Kelas::selug', array_merge($data, ['title' => $this->title]));
+	}
+
+	public function create(Request $request)
+	{
+		//FormReference//
+		$data['forms'] = array(
+			//Forms//
+		);
+
+		$this->log($request, 'membuka form tambah '.$this->title);
+		return view('Kelas::selug_create', array_merge($data, ['title' => $this->title]));
+	}
+
+	function store(Request $request)
+	{
+		$request->validate([
+			//FormValidation//
+		]);
+
+		$selug = new Kelas();
+		//ModelField//$selug->save();
+
+		$text = 'membuat '.$this->title; //' baru '.$selug->what;
+		$this->log($request, $text, ['selug.id' => $selug->id]);
+		return redirect()->route($request->back ?? 'selug.index')->with('message_success', 'Title berhasil ditambahkan!');
+	}
+
+	public function show(Request $request, Kelas $selug)
+	{
+		$data['selug'] = $selug;
+
+		$text = 'melihat detail '.$this->title;//.' '.$selug->what;
+		$this->log($request, $text, ['selug.id' => $selug->id]);
+		return view('Kelas::selug_detail', array_merge($data, ['title' => $this->title]));
+	}
+
+	public function edit(Request $request, Kelas $selug)
+	{
+		$data['selug'] = $selug;
+
+		//FormReference//
+		$data['forms'] = array(
+			//FormsEdit//
+		);
+
+		$text = 'membuka form edit '.$this->title;//.' '.$selug->what;
+		$this->log($request, $text, ['selug.id' => $selug->id]);
+		return view('Kelas::selug_update', array_merge($data, ['title' => $this->title]));
+	}
+
+	public function update(Request $request, $id)
+	{
+		$request->validate([
+			//FormValidation//
+		]);
+		
+		$selug = Kelas::find($id);
+		//ModelField//$selug->save();
+
+
+		$text = 'mengedit '.$this->title;//.' '.$selug->what;
+		$this->log($request, $text, ['selug.id' => $selug->id]);
+		return redirect()->route($request->back ?? 'selug.index')->with('message_success', 'Title berhasil diubah!');
+	}
+
+	public function destroy(Request $request, $id)
+	{
+		$selug = Kelas::find($id);
+		$selug->delete();
+
+		$text = 'menghapus '.$this->title;//.' '.$selug->what;
+		$this->log($request, $text, ['selug.id' => $selug->id]);
+		return back()->with('message_success', 'Title berhasil dihapus!');
+	}
+
+}

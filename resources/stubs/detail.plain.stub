@@ -1,0 +1,16 @@
+@extends('Laralag::layouts.master')
+    @section('title')
+        {{ $title }}
+    @endsection
+@section('content')
+<x-Laralag::breadcrumb :title='"Detail Data $title"' :crumbs="['dashboard.index' => 'Dashboard', 'NamaModule.index' => $title]" />
+<div class="row">
+    <div class="col">
+        <div class="table-responsive-md col-12">
+            <table class="table table-hover table-nowrap mb-0">
+                DetailData
+            </table>
+        </div>
+    </div>
+</div>
+@endsection
