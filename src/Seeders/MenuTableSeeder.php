@@ -19,38 +19,7 @@ class MenuTableSeeder extends Seeder
         \DB::table('menu')->delete();
         
         \DB::table('menu')->insert(array (
-            0 => 
-            array (
-                'id' => '9bfeaf59-198c-41ed-8281-04b21d49c006',
-                'menu_group_id' => '9bfeaf44-a697-48f0-8c63-5b575441ea25',
-                'nama' => 'Consectetur et quia',
-                'nama_en' => 'Fugit optio pariat',
-                'icon' => 'Consectetur dolor m',
-                'urutan' => 2,
-                'is_tampil' => 1,
-                'created_at' => '2024-05-08 15:20:58',
-                'updated_at' => '2024-05-08 15:53:05',
-                'deleted_at' => '2024-05-08 15:53:05',
-                'created_by' => '9bfeaabc-c71a-442b-8bbb-8b76194ab72d',
-                'updated_by' => '9bfeaabc-c71a-442b-8bbb-8b76194ab72d',
-                'deleted_by' => '9bfeaabc-c71a-442b-8bbb-8b76194ab72d',
-            ),
-            1 => 
-            array (
-                'id' => '9c000026-2d60-45b5-a346-5554556b3a32',
-                'menu_group_id' => '9bfeaf44-a697-48f0-8c63-5b575441ea25',
-                'nama' => 'Produk',
-                'nama_en' => 'Products',
-                'icon' => 'bi bi-book',
-                'urutan' => 1,
-                'is_tampil' => 1,
-                'created_at' => '2024-05-09 07:02:44',
-                'updated_at' => '2024-05-09 07:02:44',
-                'deleted_at' => NULL,
-                'created_by' => '9bfeaabc-c71a-442b-8bbb-8b76194ab72d',
-                'updated_by' => NULL,
-                'deleted_by' => NULL,
-            ),
+            
             2 => 
             array (
                 'id' => '9c0077c2-a96f-4729-91fc-6021d668a7de',
@@ -94,22 +63,6 @@ class MenuTableSeeder extends Seeder
                 'is_tampil' => 1,
                 'created_at' => '2024-05-09 12:38:27',
                 'updated_at' => '2024-05-09 12:38:27',
-                'deleted_at' => NULL,
-                'created_by' => '9bfeaabc-c71a-442b-8bbb-8b76194ab72d',
-                'updated_by' => NULL,
-                'deleted_by' => NULL,
-            ),
-            5 => 
-            array (
-                'id' => '9c00b9cf-2f30-4053-83f4-f40597cbc12e',
-                'menu_group_id' => '9bfeaf44-a697-48f0-8c63-5b575441ea25',
-                'nama' => 'Post',
-                'nama_en' => 'Post',
-                'icon' => 'bi bi-arrow-down-up',
-                'urutan' => 1,
-                'is_tampil' => 1,
-                'created_at' => '2024-05-09 15:41:52',
-                'updated_at' => '2024-05-09 15:41:52',
                 'deleted_at' => NULL,
                 'created_by' => '9bfeaabc-c71a-442b-8bbb-8b76194ab72d',
                 'updated_by' => NULL,
