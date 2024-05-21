@@ -4,6 +4,11 @@
 @endsection
 @section('content')
     <x-Laralag::breadcrumb :title='"Detail Data $title"' :crumbs="['dashboard.index' => 'Dashboard', 'role.index' => 'Role']" />
+    <div class="row mt-2">
+        <div class="col-12">
+            @include('Laralag::include.flash')
+        </div>
+    </div>
     <div class="row">
         <div class="col">
             <div class="table-responsive-md col-12">

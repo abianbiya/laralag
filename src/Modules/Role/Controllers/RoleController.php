@@ -140,6 +140,8 @@ class RoleController extends Controller
 		$role = Role::find($request->role_id);
 		$role->permission()->sync(array_keys($permissions));
 
+		Auth::user()->syncPermission();
+
 		return back()->with('message_success', 'Role berhasil disimpan!');
 	}
 	

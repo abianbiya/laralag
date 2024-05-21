@@ -42,9 +42,15 @@ trait HasPermissions
         $this->activeRole = $this->roles()->where('slug', $role)->first();
         session(['active_role' => $this->activeRole->slug]);
         session(['active_role_name' => $this->activeRole->nama]);
-        session(['active_permissions' => $this->activeRole->permission->pluck('slug')->toArray()]);
+        $this->syncPermission();
     }
 
+    public function syncPermission()
+    {
+        $this->activeRole = $this->roles()->where('slug', session('active_role'))->first();
+        session(['active_permissions' => $this->activeRole->permission->pluck('slug')->toArray()]);
+    }
+    
     /**
      * Get the currently active role for the user.
      *
