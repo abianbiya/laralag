@@ -91,9 +91,16 @@ if (!function_exists('customButton')) {
 }
 
 if (!function_exists('tanggal')) {
-    function tanggal($when, $cetak_hari = false, $cetak_waktu = true)
+    function tanggal($when, $cetakHari = false)
     {
-        return empty($when) ? '' : Carbon::parse($when)->translatedFormat('j F Y');
+        return empty($when) ? '' : Carbon::parse($when)->locale('id')->translatedFormat($cetakHari ? 'l, j F Y' : 'j F Y');
+    }
+}
+
+if (!function_exists('waktu')) {
+    function waktu($when, $customFormat = 'l, j F Y - H:i')
+    {
+        return empty($when) ? '' : Carbon::parse($when)->locale('id')->translatedFormat($customFormat);
     }
 }
 
