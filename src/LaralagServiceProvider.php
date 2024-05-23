@@ -16,6 +16,7 @@ use Abianbiya\Laralag\Commands\LaralagInstall;
 use Abianbiya\Laralag\Commands\SyncPermission;
 use Abianbiya\Laralag\View\Components\Sidebar;
 use Abianbiya\Laralag\Commands\RunLaralagSeeder;
+use Abianbiya\Laralag\Commands\GenerateApiModule;
 use Abianbiya\Laralag\Middleware\CheckPermission;
 
 class LaralagServiceProvider extends ServiceProvider
@@ -89,6 +90,7 @@ class LaralagServiceProvider extends ServiceProvider
         // Register the command
         if ($this->app->runningInConsole()) {
             $this->commands([
+                GenerateApiModule::class,
                 GenerateModule::class,
                 LaralagInstall::class,
                 RunLaralagSeeder::class,

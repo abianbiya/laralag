@@ -39,7 +39,7 @@ class GenerateModule extends Command
 
         $withApi = $this->option('api');
         if ($withApi) {
-            Artisan::call('make:api ' . $module);
+            Artisan::call('lag:api ' . $module);
         }
     }
 

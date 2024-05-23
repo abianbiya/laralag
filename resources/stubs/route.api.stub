@@ -1,0 +1,5 @@
+
+
+// -- API Controllers
+use DummyNamespace\DummyClass;
+Route::apiResource('dummy-slug', DummyClass::class);
