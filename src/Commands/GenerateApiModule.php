@@ -121,7 +121,7 @@ class GenerateApiModule extends Command
 
         foreach ($fields['kolom'] as $key => $value) {
             if (!in_array($key, $exceptField)) {
-                $modelField .= "\$$slug->$key = \$request->input('$key');
+                $modelField .= "\$$modelCamel->$key = \$request->input('$key');
         ";
                 $formValidation .= "'$key' => 'required',
             ";
