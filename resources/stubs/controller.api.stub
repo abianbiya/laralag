@@ -4,7 +4,7 @@ namespace DummyNamespace;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Modules\dummy-slug\Models\DummyModel;
+use App\Modules\DummyModel\Models\DummyModel;
 
 class DummyClass extends Controller
 {
