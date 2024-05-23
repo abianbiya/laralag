@@ -38,8 +38,8 @@ class RoleUserController extends Controller
 
 	public function create(Request $request)
 	{
-		$ref_role = Role::all()->pluck('slug','id');
-		$ref_scope = Scope::all()->pluck('slug','id');
+		$ref_role = Role::all()->pluck('nama','id');
+		$ref_scope = Scope::all()->pluck('nama','id');
 
 		if($request->has('user_id')){
 			$user_id = $request->get('user_id');
