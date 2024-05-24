@@ -11,6 +11,13 @@ class DummyClass extends Controller
     public function index()
     {
         $data = DummyModel::all();
+
+        $data = [
+            'success' => true,
+            'message' => 'Berhasil mengambil data moduleTitle',
+            'data' => $data
+        ];
+
         return response()->json($data);
     }
 
@@ -24,12 +31,25 @@ class DummyClass extends Controller
         //ModelField//
         $dummyModel->save();
 
-        return response()->json($dummyModel);
+        $data = [
+            'success' => true,
+            'message' => 'Berhasil menyimpan data moduleTitle',
+            'data' => $dummyModel
+        ];
+
+        return response()->json($data);
     }
 
     public function show($id)
     {
         $data = DummyModel::find($id);
+
+        $data = [
+            'success' => true,
+            'message' => 'Berhasil mengambil detail moduleTitle',
+            'data' => $data
+        ];
+
         return response()->json($data);
     }
 
@@ -43,14 +63,27 @@ class DummyClass extends Controller
         //ModelField//
         $dummyModel->save();
 
-        return response()->json($dummyModel);
+        $data = [
+            'success' => true,
+            'message' => 'Berhasil memperbarui data moduleTitle',
+            'data' => $dummyModel
+        ];
+
+        return response()->json($data);
     }
 
     public function destroy($id)
     {
         $dummyModel = DummyModel::find($id);
+        
+        $data = [
+            'success' => true,
+            'message' => 'Berhasil menghapus data moduleTitle',
+            'data' => $dummyModel
+        ];
+
         $dummyModel->delete();
 
-        return response()->json(['message' => 'Deleted successfully']);
+        return response()->json($data);
     }
 }

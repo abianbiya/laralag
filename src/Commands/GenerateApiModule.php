@@ -95,6 +95,7 @@ class GenerateApiModule extends Command
         $model = Str::studly($module);
         $slug = Str::kebab($module);
         $modelCamel = Str::camel($module);
+        $moduleTitle = Str::title($module);
 
         $stub = str_replace([
             'DummyNamespace',
@@ -102,7 +103,8 @@ class GenerateApiModule extends Command
             'DummyClass',
             'dummy-slug',
             'DummyModel',
-            'dummyModel'
+            'dummyModel',
+            'moduleTitle'
         ], [
             $namespace,
             'App\\',
@@ -110,6 +112,7 @@ class GenerateApiModule extends Command
             $slug,
             $model,
             $modelCamel,
+            $moduleTitle,
         ], $stub);
 
         $fields = $this->getTableInfo($module);
