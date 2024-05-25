@@ -2,4 +2,10 @@
 
 // -- API Controllers
 use DummyNamespace\DummyClass;
-Route::apiResource('api/dummy-slug', DummyClass::class);
+Route::prefix('api')->group(function () {
+	Route::get('dummy-slug', [DummyClass::class, 'index'])->name('api.dummy-slug.index');
+	Route::post('dummy-slug', [DummyClass::class, 'store'])->name('api.dummy-slug.store');
+	Route::get('dummy-slug/{dummy-slug}', [DummyClass::class, 'show'])->name('api.dummy-slug.show');
+	Route::put('dummy-slug/{dummy-slug}', [DummyClass::class, 'update'])->name('api.dummy-slug.update');
+	Route::delete('dummy-slug/{dummy-slug}', [DummyClass::class, 'destroy'])->name('api.dummy-slug.destroy');
+});
