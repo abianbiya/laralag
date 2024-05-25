@@ -2,4 +2,4 @@
 
 // -- API Controllers
 use DummyNamespace\DummyClass;
-Route::apiResource('dummy-slug', DummyClass::class);
+Route::apiResource('api/dummy-slug', DummyClass::class);
