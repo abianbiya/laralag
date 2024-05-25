@@ -19,7 +19,7 @@
         $(".multi-select2").selectize({
             maxItems: null
         });
-        $('#wanna-swal').on('click', function() {
+        $(document).on('click', '#wanna-swal', function() {
             var $btn = $(this);
             var title = $btn.data('sw-title') || 'Apakah Anda yakin?';
             var message = $btn.data('sw-message') || 'Anda tidak akan dapat membatalkan aksi ini.';
@@ -29,18 +29,18 @@
             var cancelBtn = $btn.data('sw-cancel-btn') || 'Batalkan';
 
             Swal.fire({
-                title: title,
-                text: message,
-                icon: type, // 'warning', 'error', 'success', 'info'
-                buttons: true,
-				showCancelButton: true,
-				confirmButtonText: yesBtn,
-                dangerMode: type === 'danger',
-				showCloseButton: true
+            title: title,
+            text: message,
+            icon: type, // 'warning', 'error', 'success', 'info'
+            buttons: true,
+            showCancelButton: true,
+            confirmButtonText: yesBtn,
+            dangerMode: type === 'danger',
+            showCloseButton: true
             }).then((willConfirm) => {
-				if (willConfirm.isConfirmed) {
-               		window.location.href = href;
-				}
+                if (willConfirm.isConfirmed) {
+                    window.location.href = href;
+                }
             });
         });
     });
