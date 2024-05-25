@@ -10,6 +10,7 @@
     <!-- App favicon -->
     <link rel="shortcut icon" href="{{ URL::asset('build/images/favicon.ico') }}">
     @include('Laralag::layouts.head-css')
+    @stack('css')
     @livewireStyles
 </head>
 <body>
@@ -39,6 +40,7 @@
     @include('Laralag::layouts.customizer')
     <!-- JAVASCRIPT -->
     @include('Laralag::layouts.vendor-scripts')
+    @stack('js')
     @livewireScripts
 </body>
 
