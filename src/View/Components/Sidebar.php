@@ -31,7 +31,10 @@ class Sidebar extends Component
             $role = Role::whereSlug($role)->first();
             $permissions = $role->permission ?? [];
             
-            $data['menus'] = MenuGroup::with('menu.module')
+            $data['menus'] = MenuGroup::with([
+                                'menu.module' => function($query) use ($permissions){
+                                                    $query->whereIn('permission', $permissions->pluck('slug')->toArray());
+                                                }])
                                 ->whereHas('menu.module', function($query) use ($permissions){
                                     $query->whereIn('permission', $permissions->pluck('slug')->toArray());
                                 })
