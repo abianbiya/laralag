@@ -19,7 +19,8 @@ class CheckPermission
     public function handle(Request $request, Closure $next, $permission)
     {
         // Check if the user is authenticated
-        if (!Auth::check()) {
+        
+        if (!Auth::check() && !in_array($request->route()->getName(), config('laralag.ignore-check-permission-routes', []))) {
             return redirect('login');
         }
 

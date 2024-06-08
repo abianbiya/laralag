@@ -17,7 +17,21 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        // $this->middleware('auth');w
+        // $this->middleware('auth');
+    }
+
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+
+    public function home()
+    {
+        if(config('laralag.has_landing') == false){
+            return redirect()->route('login');
+        }
+        return view('welcome');
     }
 
     /**
@@ -53,7 +67,11 @@ class HomeController extends Controller
 
     public function logout() {
         Auth::logout();
-        return redirect('/login');
+        if(config('laralag.has_landing') == true){
+            return redirect(route(config('laralag.landing_route', 'home.index')));
+        }else{
+            return redirect(route('login'));
+        }
     }
 
     public function changeRole($slugRole) {

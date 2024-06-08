@@ -11,6 +11,7 @@ Route::group(['middleware' => 'web'], function () {
 
 	Route::get('/logout', [HomeController::class, 'logout'])->name('logout');
 	Route::get('index/{locale}', [HomeController::class, 'lang']);
+	Route::get('/', [HomeController::class, 'home'])->name(config('laralag.landing_route', 'home.index'));
 });
 
 Route::controller(HomeController::class)->middleware(['web', 'auth'])->group(function () {
@@ -18,6 +19,6 @@ Route::controller(HomeController::class)->middleware(['web', 'auth'])->group(fun
 		return view('widgets');
 	});
 	// Route::get('{any}', 'index')->name('pages.read');
-	Route::get('/', 'root')->name('dashboard.index');
+	Route::get('/dashboard', 'root')->name('dashboard.index');
 	Route::get('/change/role/{slugRole}', 'changeRole')->name('dashboard.change.role.index');
 });

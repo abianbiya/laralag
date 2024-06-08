@@ -42,7 +42,7 @@ class Login extends Component
             }
             $user->setActiveRole($user->roles->first()->slug);
 
-            return redirect()->intended('/');
+            return redirect()->intended(filled(config('laralag.home_route', null)) ? route(config('laralag.home_route')) : '/');
         } else {
             $this->addError('email', trans('auth.failed'));
            return redirect()->back();
