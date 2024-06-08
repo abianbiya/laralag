@@ -32,7 +32,7 @@
                 <ul class="navbar-nav" id="navbar-nav">
                     <li class="menu-title"><span data-key="t-menu">@lang('translation.menu')</span></li>
                     <li class="nav-item">
-                        <a href="{{ route('dashboard.index') }}" class="nav-link menu-link"> <i class="bi bi-speedometer2"></i> <span data-key="t-dashboard">Dashboard</span> </a>
+                        <a href="{{ route(config('laralag.home_route')) }}" class="nav-link menu-link"> <i class="bi bi-speedometer2"></i> <span data-key="t-dashboard">Dashboard</span> </a>
                     </li>
 
                     @foreach ($menus as $item)
