@@ -24,7 +24,7 @@
             var title = $btn.data('sw-title') || 'Apakah Anda yakin?';
             var message = $btn.data('sw-message') || 'Anda tidak akan dapat membatalkan aksi ini.';
             var type = $btn.data('sw-type') || 'warning';
-            var href = $btn.data('sw-href') || '{{ route('dashboard.index') }}';
+            var href = $btn.data('sw-href') || '{{ url("/") }}';
             var yesBtn = $btn.data('sw-yes-btn') || 'Ya, Saya yakin';
             var cancelBtn = $btn.data('sw-cancel-btn') || 'Batalkan';
 
