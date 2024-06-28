@@ -54,6 +54,9 @@ class Register extends Component
     }
     public function render()
     {
+        if('laralag.custom_register_blade'){
+            return view('laralag.custom_register_blade');
+        }
         return view('Laralag::livewire.auth.register')->extends('Laralag::layouts.master-without-nav');
     }
 }

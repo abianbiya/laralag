@@ -51,6 +51,10 @@ class Login extends Component
 
     public function render()
     {
-        return view('Laralag::livewire.auth.login')->extends('Laralag::layouts.master-without-nav');
+        if(filled(config('laralag.custom_login_blade'))){
+            return view(config('laralag.custom_login_blade'));
+        }else{
+            return view('Laralag::livewire.auth.login')->extends('Laralag::layouts.master-without-nav');
+        }
     }
 }

@@ -13,4 +13,7 @@ return [
 	'home_route' => 'dashboard.index',
 	'landing_route' => 'home.index',
 	'has_landing' => true,
+	'dashboard_blade' => '',
+	'custom_login_blade' => '',
+	'custom_register_blade' => '',
 ];
