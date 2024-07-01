@@ -73,7 +73,7 @@
                         </td>
                         <td>
                             {{ actionButton('module.edit', [$module->id, 'back' => 'menu.index'], $title) }}
-                            {{ actionButton('module.destroy', $item->id, $title) }}
+                            {{ actionButton('module.destroy', $module->id, $title) }}
                         </td>
                     </tr>
                 @endforeach
