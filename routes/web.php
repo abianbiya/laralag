@@ -20,5 +20,5 @@ Route::controller(HomeController::class)->middleware(['web', 'auth'])->group(fun
 	});
 	// Route::get('{any}', 'index')->name('pages.read');
 	Route::get('/dashboard', 'root')->name('dashboard.index');
-	Route::get('/change/role/{slugRole}', 'changeRole')->name('dashboard.change.role.index');
+	Route::get('/change/role/{slugRole}/{scopeId?}', 'changeRole')->name('dashboard.change.role.index');
 });

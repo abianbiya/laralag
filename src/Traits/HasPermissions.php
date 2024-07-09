@@ -4,6 +4,7 @@ namespace Abianbiya\Laralag\Traits;
 
 use Abianbiya\Laralag\Models\Permission;
 use Abianbiya\Laralag\Modules\Role\Models\Role;
+use Abianbiya\Laralag\Modules\Scope\Models\Scope;
 use Illuminate\Support\Facades\Session;
 
 trait HasPermissions
@@ -26,7 +27,7 @@ trait HasPermissions
         if (session('active_role') === null){
             return false;
         }
-        // dd(session('active_permissions'));
+        
         return in_array($permission, session('active_permissions'));
     }
 
@@ -42,6 +43,13 @@ trait HasPermissions
         $this->activeRole = $this->roles()->where('slug', $role)->first();
         session(['active_role' => $this->activeRole->slug]);
         session(['active_role_name' => $this->activeRole->nama]);
+        
+        if($scope !== null){
+            $scope = Scope::find($scope);
+            session(['active_scope' => $scope->slug]);
+            session(['active_scope_name' => $scope->akronim]);
+        }
+
         $this->syncPermission();
     }
 

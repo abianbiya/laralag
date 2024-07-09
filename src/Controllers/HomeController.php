@@ -74,8 +74,9 @@ class HomeController extends Controller
         }
     }
 
-    public function changeRole($slugRole) {
-        Auth::user()->setActiveRole($slugRole);
+    public function changeRole($slugRole, $scopeId = null) {
+        $user = Auth::user();
+        $user->setActiveRole($slugRole, $scopeId);
         return redirect()->back()->with('message_success', "Berhasil mengganti role ke $slugRole");
     }
 }
