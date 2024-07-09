@@ -31,7 +31,7 @@
                             <ul class="list-group">
                                 @foreach($user->roleUser as $role)
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        {{ $role->role->nama }} {{ $role->scope ? "(".$role->scope->nama.")" : '' }}
+                                        {{ $role->role->nama }} {{ $role->scope_id ? "(".$role->scope->nama.")" : '' }}
                                         <a href="{{ route('roleuser.destroy', [$role->id]) }}" class="btn btn-sm btn-danger"> <i class="bi bi-trash"></i> </a>
                                     </li>
                                 @endforeach

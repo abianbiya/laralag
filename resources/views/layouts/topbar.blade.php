@@ -245,7 +245,7 @@
                             <img class="rounded-circle header-profile-user" src="{{ asset('build/images/users/user-dummy-img.jpg') }}" alt="Header Avatar">
                             <span class="text-start ms-xl-2">
                                 <span class="d-none d-xl-inline-block ms-1 fw-medium user-name-text">{{ Auth::user()->name }}</span>
-                                <span class="d-none d-xl-block ms-1 fs-13 text-reset user-name-sub-text">{{ session('active_role_name') }}</span>
+                                <span class="d-none d-xl-block ms-1 fs-13 text-reset user-name-sub-text">{{ Auth::user()->getActiveRoleScope() }}</span>
                             </span>
                         </span>
                     </button>
@@ -257,9 +257,8 @@
                         {{-- <a class="dropdown-item" href="#!"><i class="mdi mdi-message-text-outline text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Messages</span></a>
                         <a class="dropdown-item" href="#!"><i class="mdi mdi-calendar-check-outline text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Taskboard</span></a>
                         <a class="dropdown-item" href="pages-faqs"><i class="mdi mdi-lifebuoy text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Help</span></a> --}}
-                        
-                        @foreach (Auth::user()->roles as $role)
-                            <a class="dropdown-item" href="{{ route('dashboard.change.role.index', $role->slug) }}"><i class="mdi mdi-account-convert text-muted fs-16 align-middle me-1"></i> <span class="align-middle">{{ $role->nama }}</span></a>
+                        @foreach (Auth::user()->getRoleList() ?? [] as $role)
+                            <a class="dropdown-item" href="{{ route('dashboard.change.role.index', ['slugRole' => $role['role'], 'scope' => $role['scope']]) }}"><i class="mdi mdi-account-convert text-muted fs-16 align-middle me-1"></i> <span class="align-middle">{{ $role['display'] }}</span></a>
                         @endforeach
 
                         <div class="dropdown-divider"></div>

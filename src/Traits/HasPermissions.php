@@ -2,10 +2,11 @@
 
 namespace Abianbiya\Laralag\Traits;
 
+use Illuminate\Support\Facades\Session;
 use Abianbiya\Laralag\Models\Permission;
 use Abianbiya\Laralag\Modules\Role\Models\Role;
 use Abianbiya\Laralag\Modules\Scope\Models\Scope;
-use Illuminate\Support\Facades\Session;
+use Abianbiya\Laralag\Modules\RoleUser\Models\RoleUser;
 
 trait HasPermissions
 {
@@ -15,6 +16,21 @@ trait HasPermissions
      * @var \App\Models\Role
      */
     protected $activeRole;
+
+    /**
+     * Relations
+     *
+     * @return void
+     */
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'role_user')->using(RoleUser::class)->withPivot('scope_id')->wherePivotNull('deleted_at');
+    }
+
+    public function roleUsers()
+    {
+        return $this->hasMany(RoleUser::class);
+    }
 
     /**
      * Check if the user has a specific permission based on their active role.
@@ -38,25 +54,32 @@ trait HasPermissions
      * @param string|null $scope
      * @return void
      */
-    public function setActiveRole($role, $scope = null)
+    public function setActiveRole($roleSlug, $scopeSlug = null)
     {
-        $this->activeRole = $this->roles()->where('slug', $role)->first();
-        session(['active_role' => $this->activeRole->slug]);
-        session(['active_role_name' => $this->activeRole->nama]);
-        
-        if($scope !== null){
-            $scope = Scope::find($scope);
-            session(['active_scope' => $scope->slug]);
-            session(['active_scope_name' => $scope->akronim]);
-        }
+        $roleUser = $this->roleUsers()
+            ->whereHas('role', function ($query) use ($roleSlug) {
+                $query->where('slug', $roleSlug);
+            })
+            ->when($scopeSlug, function ($query) use ($scopeSlug) {
+                $query->whereHas('scope', function ($q) use ($scopeSlug) {
+                    $q->where('slug', $scopeSlug);
+                });
+            })
+            ->firstOrFail();
 
-        $this->syncPermission();
+        session([
+            'active_role' => $roleUser->role->slug,
+            'active_role_name' => $roleUser->role->nama,
+            'active_scope' => $roleUser->scope ? $roleUser->scope->slug : null,
+            'active_scope_name' => $roleUser->scope ? $roleUser->scope->akronim : null,
+        ]);
+
+        $this->syncPermission($roleUser->role->load('permission'));
     }
 
-    public function syncPermission()
+    public function syncPermission($role)
     {
-        $this->activeRole = $this->roles()->where('slug', session('active_role'))->first();
-        session(['active_permissions' => $this->activeRole->permission->pluck('slug')->toArray()]);
+        session(['active_permissions' => $role->permission->pluck('slug')->toArray()]);
     }
     
     /**
@@ -69,49 +92,65 @@ trait HasPermissions
         return session('active_role');
     }
 
-    /**
-     * Get the currently active role for the user.
-     *
-     * @return \App\Models\Role|null
-     */
     public function getActiveRoleName()
     {
         return session('active_role_name');
     }
 
-    /**
-     * Get all roles assigned to the user.
-     *
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    public function roles()
+    public function getActiveScope()
     {
-        return $this->belongsToMany(Role::class)->withPivot('scope_id');
+        return session('active_scope');
     }
 
-    /**
-     * Assign a role to the user.
-     *
-     * @param string $role
-     * @param string|null $scope
-     * @return void
-     */
-    public function assignRole($role, $scope = null)
+    public function getActiveScopeName()
     {
-        $role = Role::whereSlug($role)->firstOrFail();
-        $this->roles()->attach($role, ['scope_id' => $scope]);
+        return session('active_scope_name');
     }
 
-    /**
-     * Revoke a role from the user.
-     *
-     * @param string $role
-     * @return void
-     */
-    public function revokeRole($role)
+    public function getActiveRoleScope()
     {
-        $role = Role::whereSlug($role)->firstOrFail();
-        $this->roles()->detach($role);
+        return str(session('active_role_name'))->append(filled(session('active_scope')) ?  ' (' . session('active_scope_name').')' : '');
+    }
+
+    public function getRoleList(): array|null
+    {
+        return session('user_role_list');
+    }
+
+    public function setRoleList()
+    {
+        foreach($this->roleUsers as $roleUser){
+            $roles[$roleUser->id]['display'] = str($roleUser->role->nama)->append($roleUser->scope_id ? ' ('. $roleUser->scope->akronim.')' : '');
+            $roles[$roleUser->id]['role'] = $roleUser->role->slug;
+            $roles[$roleUser->id]['scope'] = @$roleUser->scope->slug;
+        }
+        session(['user_role_list' => $roles]);
+    }
+
+    public function assignRole($roleSlug, $scopeSlug = null)
+    {
+        $role = Role::where('slug', $roleSlug)->firstOrFail();
+        $scope = $scopeSlug ? Scope::where('slug', $scopeSlug)->firstOrFail() : null;
+
+        RoleUser::create([
+            'user_id' => $this->id,
+            'role_id' => $role->id,
+            'scope_id' => $scope ? $scope->id : null,
+        ]);
+    }
+
+    public function revokeRole($roleSlug, $scopeSlug = null)
+    {
+        $this->roleUsers()
+            ->whereHas('role', function ($query) use ($roleSlug) {
+                $query->where('slug', $roleSlug);
+            })
+            ->when($scopeSlug, function ($query) use ($scopeSlug) {
+                $query->whereHas('scope', function ($q) use ($scopeSlug) {
+                    $q->where('slug', $scopeSlug);
+                });
+            })
+            ->delete();
     }
 
     /**

@@ -52,8 +52,7 @@ class RoleUserController extends Controller
             'user_id' => ['', html()->hidden("user_id", $user->id)],
             'user_id_name' => ['User', html()->text("user_id", $user->name)->class("form-control")->placeholder("")->disabled()->isReadonly(true)],
 			'role_id' => ['Role', html()->select("role_id", $ref_role, old("role_id"))->class("form-select")->required()],//->placeholder("-- Pilih Role")],
-            'scope_id' => ['Scope', html()->select("scope_id", $ref_scope, old("scope_id"))->class("form-select select2")->placeholder("-- Pilih Scope")],
-            
+            'scope_id' => ['Scope', html()->select("scope_id", $ref_scope, old("scope_id"))->class("form-select")->placeholder("-- Pilih Scope")],
 		);
 
 		$this->log($request, 'membuka form tambah '.$this->title);
@@ -66,7 +65,6 @@ class RoleUserController extends Controller
 			'role_id' => 'required|string',
 			'user_id' => 'required|string',
 			'scope_id' => 'nullable|string',
-			
 		]);
 
 		$roleuser = RoleUser::firstOrNew([

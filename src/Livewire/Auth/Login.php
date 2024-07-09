@@ -41,6 +41,7 @@ class Login extends Component
                 return redirect()->back();
             }
             $user->setActiveRole($user->roles->first()->slug);
+            $user->setRoleList();
 
             return redirect()->intended(filled(config('laralag.home_route', null)) ? route(config('laralag.home_route')) : '/');
         } else {
