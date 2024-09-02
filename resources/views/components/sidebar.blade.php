@@ -4,11 +4,11 @@
         <!-- LOGO -->
         <div class="navbar-brand-box">
             <a href="index" class="logo logo-dark">
-                <span class="logo-sm">
-                    <img src="{{ URL::asset('build/images/logo-sm.png') }}" alt="" height="26">
+                <span class="logo-sm" style="font-size: 18px; font-weight: bold; text-transform: uppercase">
+                    <span style="color: var(--tb-heading-color);">{{ config('laralag.app_short_name', substr(config('app.name'), 0, 2)) }}</span>
                 </span>
-                <span class="logo-lg">
-                    <img src="{{ URL::asset('build/images/logo-dark.png') }}" alt="" height="26">
+                <span class="logo-lg" style="font-size: 22px; font-weight: bold; text-transform: uppercase">
+                    <span style="color: var(--tb-heading-color);">{{ config('laralag.app_name') }}</span>.
                 </span>
             </a>
             <a href="index" class="logo logo-light">
