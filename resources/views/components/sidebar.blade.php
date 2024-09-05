@@ -11,7 +11,7 @@
                     <span style="color: var(--tb-heading-color);">{{ config('laralag.app_name') }}</span>.
                 </span>
             </a>
-            <a href="index" class="logo logo-light">
+            <a href="{{ route(config('laralag.home_route')) ?? url('/') }}" class="logo logo-light">
                 <span class="logo-sm">
                     <img src="{{ URL::asset('build/images/logo-sm.png') }}" alt="" height="26">
                 </span>
