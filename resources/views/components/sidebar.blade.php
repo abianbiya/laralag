@@ -3,7 +3,7 @@
     <div class="app-menu navbar-menu">
         <!-- LOGO -->
         <div class="navbar-brand-box">
-            <a href="index" class="logo logo-dark">
+            <a href="{{ route(config('laralag.home_route')) ?? url('/') }}" class="logo logo-dark">
                 <span class="logo-sm" style="font-size: 18px; font-weight: bold; text-transform: uppercase">
                     <span style="color: var(--tb-heading-color);">{{ config('laralag.app_short_name', substr(config('app.name'), 0, 2)) }}</span>
                 </span>
