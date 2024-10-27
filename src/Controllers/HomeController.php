@@ -42,6 +42,9 @@ class HomeController extends Controller
 
     public function root()
     {
+        if(config('laralag.home_route') != 'dashboard.index'){
+            return redirect()->route(config('laralag.home_route'));
+        }
         return view('Laralag::pages.dashboard');
     }
 
@@ -77,6 +80,6 @@ class HomeController extends Controller
     public function changeRole($slugRole, $scope = null) {
         $user = Auth::user();
         $user->setActiveRole($slugRole, $scope);
-        return redirect()->back()->with('message_success', "Berhasil mengganti role ke $slugRole");
+        return redirect()->url('/')->with('message_success', "Berhasil mengganti role ke $slugRole");
     }
 }
