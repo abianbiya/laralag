@@ -81,7 +81,7 @@ class HomeController extends Controller
         $user = Auth::user();
         $user->setActiveRole($slugRole, $scope);
 
-        
-        return redirect()->url('/')->with('message_success', "Berhasil mengganti role ke $slugRole");
+
+        return redirect()->route(config('laralag.landing_route', 'home.index'))->with('message_success', "Berhasil mengganti role ke $slugRole");
     }
 }
