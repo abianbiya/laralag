@@ -80,6 +80,8 @@ class HomeController extends Controller
     public function changeRole($slugRole, $scope = null) {
         $user = Auth::user();
         $user->setActiveRole($slugRole, $scope);
+
+        
         return redirect()->url('/')->with('message_success', "Berhasil mengganti role ke $slugRole");
     }
 }
