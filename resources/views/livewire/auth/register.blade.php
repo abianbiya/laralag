@@ -8,7 +8,7 @@
                 <div class="h-100 mb-0 p-4 d-flex flex-column justify-content-between">
                     <div class="d-flex align-items-center">
                         <div class="flex-grow-1">
-                            <img src="{{ URL::asset('build/images/logo-light-full.png') }}" alt=""
+                            <img src="{{ URL::asset('lag/images/logo-light-full.png') }}" alt=""
                                  height="32" />
                         </div>
                     </div>
@@ -216,7 +216,7 @@
 
 @section('script')
     <!-- validation init -->
-    <script src="{{ URL::asset('build/js/pages/form-validation.init.js') }}"></script>
+    <script src="{{ URL::asset('lag/js/pages/form-validation.init.js') }}"></script>
     <!-- password create init -->
-    <script src="{{ URL::asset('build/js/pages/passowrd-create.init.js') }}"></script>
+    <script src="{{ URL::asset('lag/js/pages/passowrd-create.init.js') }}"></script>
 @endsection

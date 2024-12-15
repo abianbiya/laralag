@@ -15,12 +15,12 @@
                                     <div class="auth-card card bg-primary h-100 border-0 shadow-none p-sm-3 overflow-hidden">
                                         <div class="card-body p-4 d-flex justify-content-between flex-column">
                                             <div class="auth-image">
-                                                <img src="{{ URL::asset('build/images/logo-light-full.png') }}" alt="" height="26" />
-                                                <img src="{{ URL::asset('build/images/effect-pattern/auth-effect-2.png') }}" alt=""
+                                                <img src="{{ URL::asset('lag/images/logo-light-full.png') }}" alt="" height="26" />
+                                                <img src="{{ URL::asset('lag/images/effect-pattern/auth-effect-2.png') }}" alt=""
                                                     class="auth-effect-2" />
-                                                <img src="{{ URL::asset('build/images/effect-pattern/auth-effect.png') }}" alt=""
+                                                <img src="{{ URL::asset('lag/images/effect-pattern/auth-effect.png') }}" alt=""
                                                     class="auth-effect" />
-                                                <img src="{{ URL::asset('build/images/effect-pattern/auth-effect.png') }}" alt=""
+                                                <img src="{{ URL::asset('lag/images/effect-pattern/auth-effect.png') }}" alt=""
                                                     class="auth-effect-3" />
                                             </div>
 
@@ -174,6 +174,6 @@
     </section>
 @endsection
 @section('script')
-    <script src="{{ URL::asset('build/js/pages/form-validation.init.js') }}"></script>
-    <script src="{{ URL::asset('build/js/pages/passowrd-create.init.js') }}"></script>
+    <script src="{{ URL::asset('lag/js/pages/form-validation.init.js') }}"></script>
+    <script src="{{ URL::asset('lag/js/pages/passowrd-create.init.js') }}"></script>
 @endsection

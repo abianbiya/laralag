@@ -25,7 +25,7 @@ class UserController extends Controller
 		$query = User::with('roleUser.role', 'roleUser.scope');
 		if($request->has('search')){
 			$search = $request->get('search');
-			$query->whereAny(['Username', 'Email', 'Name', 'Email Verified At', 'Password', 'Identitas', 'Remember Token', ], 'like', "%$search%");
+			$query->whereAny(['Username', 'Email', 'Name', 'Identitas'], 'like', "%$search%");
 		}
 		$data['data'] = $query->paginate(10)->withQueryString();
 

@@ -30,6 +30,6 @@
 </div>
 @endsection
 @section('script')
-<script src="{{ URL::asset('build/libs/tom-select/js/tom-select.base.min.js') }}"></script>
-<script src="{{ URL::asset('build/js/app.js') }}"></script>
+<script src="{{ URL::asset('lag/libs/tom-select/js/tom-select.base.min.js') }}"></script>
+<script src="{{ URL::asset('lag/js/app.js') }}"></script>
 @endsection

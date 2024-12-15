@@ -15,7 +15,7 @@
         <thead>
         <tr style="background-color: #3b395e; border: none; height: 70px;">
             <th scope="col" style="padding: 28px;display: flex;align-items: center; justify-content: space-between;">
-                <img src="{{ URL::asset('build/images/logo-light-full.png') }}" alt="<?php echo Config::get('app.APP_NAME'); ?>" title="<?php echo Config::get('app.APP_NAME'); ?>" style="height: 24px;" />
+                <img src="{{ URL::asset('lag/images/logo-light-full.png') }}" alt="<?php echo Config::get('app.APP_NAME'); ?>" title="<?php echo Config::get('app.APP_NAME'); ?>" style="height: 24px;" />
             </th>
         </tr>
         </thead>

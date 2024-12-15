@@ -10,7 +10,7 @@
                 <div class="h-100 mb-0 p-4 d-flex flex-column justify-content-between">
                     <div class="d-flex align-items-center">
                         <div class="flex-grow-1">
-                            <img src="{{ URL::asset('build/images/logo-light-full.png') }}" alt=""
+                            <img src="{{ URL::asset('lag/images/logo-light-full.png') }}" alt=""
                                 height="32" />
                         </div>
                     </div>
@@ -120,5 +120,5 @@
     <!--end conatiner-->
 </section>
 @section('script')
-    <script src="{{ URL::asset('build/js/pages/password-addon.init.js') }}"></script>
+    <script src="{{ URL::asset('lag/js/pages/password-addon.init.js') }}"></script>
 @endsection

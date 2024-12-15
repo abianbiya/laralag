@@ -9,7 +9,7 @@
         <div class="row g-0 justify-content-center">
             <div class="col-xl-4 col-lg-6">
                 <div class="text-center mb-4 pb-2">
-                    <img src="{{ URL::asset('build/images/logo-light-full.png') }}" alt="" height="32" />
+                    <img src="{{ URL::asset('lag/images/logo-light-full.png') }}" alt="" height="32" />
                 </div>
                 <div class="card mb-0 border-0 shadow-none">
                     <div class="card-body p-4 p-sm-5 m-lg-2">

@@ -1,18 +1,18 @@
 <!-- JAVASCRIPT -->
-{{-- <script src="{{ asset('build/js/alpine.js') }}"></script> --}}
-<script src="{{ asset('build/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-<script src="{{ asset('build/libs/simplebar/simplebar.min.js') }}"></script>
-<script src="{{ asset('build/js/pages/plugins/lord-icon-2.1.0.js') }}"></script>
-{{-- <script src="{{ asset('build/js/plugins.js') }}"></script> --}}
-<script src="{{ asset('build/libs/jquery/jquery.min.js') }}"></script>
-<script src="{{ asset('build/libs/selectize/selectize.js') }}"></script>
-<script src="{{ asset('build/libs/flatpickr/flatpickr.min.js') }}"></script>
-<script src="{{ asset('build/libs/flatpickr/l10n/id.js') }}"></script>
-<script src="{{ asset('build/libs/sweetalert2/sweetalert2.all.min.js') }}"></script>
+{{-- <script src="{{ asset('lag/js/alpine.js') }}"></script> --}}
+<script src="{{ asset('lag/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ asset('lag/libs/simplebar/simplebar.min.js') }}"></script>
+<script src="{{ asset('lag/js/pages/plugins/lord-icon-2.1.0.js') }}"></script>
+{{-- <script src="{{ asset('lag/js/plugins.js') }}"></script> --}}
+<script src="{{ asset('lag/libs/jquery/jquery.min.js') }}"></script>
+<script src="{{ asset('lag/libs/selectize/selectize.js') }}"></script>
+<script src="{{ asset('lag/libs/flatpickr/flatpickr.min.js') }}"></script>
+<script src="{{ asset('lag/libs/flatpickr/l10n/id.js') }}"></script>
+<script src="{{ asset('lag/libs/sweetalert2/sweetalert2.all.min.js') }}"></script>
 {{-- <script src="https://cdn.ckeditor.com/ckeditor5/35.0.1/classic/ckeditor.js"></script> --}}
-<script src="{{ asset('build/libs/@ckeditor/ckeditor5-build-classic/build/ckeditor.js') }}"></script>
-<script src="{{ asset('build/js/mine.js') }}"></script>
-<script src="{{ asset('build/js/app.js') }}"></script>
+<script src="{{ asset('lag/libs/@ckeditor/ckeditor5-build-classic/build/ckeditor.js') }}"></script>
+<script src="{{ asset('lag/js/mine.js') }}"></script>
+<script src="{{ asset('lag/js/app.js') }}"></script>
 <script>
     $(document).ready(function() {
         $(".select2").selectize();

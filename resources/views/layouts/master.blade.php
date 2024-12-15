@@ -8,7 +8,7 @@
     <meta content="Laralag CRUD Generator and Access Management" name="description" />
     <meta content="Abianbiya" name="author" />
     <!-- App favicon -->
-    <link rel="shortcut icon" href="{{ URL::asset('build/images/favicon.ico') }}">
+    <link rel="shortcut icon" href="{{ URL::asset('lag/images/favicon.ico') }}">
     @include('Laralag::layouts.head-css')
     @stack('css')
     @livewireStyles

@@ -13,12 +13,14 @@ use Abianbiya\Laralag\Modules\Permission\Models\Permission;
 class GenerateModule extends Command
 {
     protected $files;
-    protected $signature = 'lag:module {name} {--menu} {--api} {--table=}';
+    protected $signature = 'lag:module {name} {--menu} {--api} {--table=} {--hasFile}';
     protected $description = 'Make you fuckin crud from just a table name';
     protected $resourcePath;
     private $fields = [];
     private $types = [];
     private $module = '';
+    
+    private $hasFile = false;
 
     public $baseDir = __DIR__ . '/../../';
 
@@ -33,6 +35,11 @@ class GenerateModule extends Command
     {
         $module = trim($this->argument('name'));
         $this->module = $module;
+
+        if($this->option('hasFile')){
+            $this->hasFile = true;
+        }
+
         $this->generate($module);
 
         $this->createMenuAndPermissions($module);
@@ -276,6 +283,13 @@ class GenerateModule extends Command
             $column_title .= "'Dibuat pada', ";
             $ajax_field .= "'created_at', ";
             $shown_column .= ($counter + 1) . ", ";
+        }
+
+        if($this->hasFile){
+            $formBody = 'html()->file("file")->class("form-control form-file")';
+            $form_add .= "'file' => ['File', " . $formBody . "],";
+
+            $form_edit .= "'file' => ['File', " . $formBody . "],";
         }
         
         $stub = str_replace('//Forms//', $form_add, $stub);
