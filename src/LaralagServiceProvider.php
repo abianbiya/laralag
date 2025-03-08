@@ -27,7 +27,7 @@ class LaralagServiceProvider extends ServiceProvider
     {
         // Publish assets
         $this->publishes([
-            $this->baseDir . 'resources/assets' => public_path('build'),
+            $this->baseDir . 'resources/assets' => public_path('lag'),
         ], 'laralag_assets');
 
         // Publish config
