@@ -26,6 +26,7 @@ class User extends Authenticatable
     use HasFactory, Notifiable, HasUuids, HasPermissions;
 	// rest of the code
 ```
+change the SESSION_DRIVER to `file` and SESSION_DOMAIN as your AAPP_URL
 and you are ready.
 
 ## Usage
