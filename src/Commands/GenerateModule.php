@@ -8,12 +8,18 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Artisan;
 use Abianbiya\Laralag\Modules\Menu\Models\Menu;
+use Abianbiya\Laralag\Modules\Module\Models\Module;
+use Abianbiya\Laralag\Modules\MenuGroup\Models\MenuGroup;
 use Abianbiya\Laralag\Modules\Permission\Models\Permission;
+
+use function Laravel\Prompts\text;
+use function Laravel\Prompts\select;
+use function Laravel\Prompts\confirm;
 
 class GenerateModule extends Command
 {
     protected $files;
-    protected $signature = 'lag:module {name} {--menu} {--api} {--table=} {--hasFile}';
+    protected $signature = 'lag:module {name} {--menu} {--menuOnly} {--api} {--table=} {--hasFile}';
     protected $description = 'Make you fuckin crud from just a table name';
     protected $resourcePath;
     private $fields = [];
@@ -38,6 +44,13 @@ class GenerateModule extends Command
 
         if($this->option('hasFile')){
             $this->hasFile = true;
+        }
+
+        // Check if we only want to create menu entries
+        if ($this->option('menuOnly')) {
+            $this->createMenuAndPermissions($module);
+            $this->info('Menu and permissions for ' . $module . ' have been created successfully.');
+            return;
         }
 
         $this->generate($module);
@@ -117,18 +130,58 @@ class GenerateModule extends Command
 
     protected function createOrUpdateMenu($moduleName, $permissions)
     {
-        // Assuming you have a Menu model where you want to link these permissions
-        $menu = Menu::firstOrCreate([
-            'name' => $moduleName
-        ], [
-            'display_name' => ucwords(str_replace('_', ' ', $moduleName)),
-            'icon' => 'default-icon', // Specify the default icon or make it configurable
-        ]);
+        // Get all menu groups for selection
+        $menuGroups = MenuGroup::all()->pluck('nama', 'id')->toArray();
+        $menuGroupId = select('Pilih grup menu untuk modul ini:', $menuGroups);
 
-        // Linking the permissions to the menu
-        foreach ($permissions as $perm) {
-            $menu->permissions()->attach(Permission::where('name', $perm)->first());
+        // Ask if user wants to create a new menu or use existing
+        $createNewMenu = confirm('Buat sebagai menu baru?', true);
+        
+        if ($createNewMenu) {
+            // Get menu details
+            $menuName = text('Masukkan nama menu:', ucwords(str_replace('_', ' ', $moduleName)), ucwords(str_replace('_', ' ', $moduleName)));
+            $menuNameEn = text('Masukkan nama menu (English):', ucwords(str_replace('_', ' ', $moduleName)), ucwords(str_replace('_', ' ', $moduleName)));
+            $icon = text('Masukkan icon menu:', 'bi bi-list', 'bi bi-list');
+            
+            // Get max order value
+            $maxMenuOrder = Menu::where('menu_group_id', $menuGroupId)->max('urutan') ?? 0;
+            
+            // Create the menu
+            $menu = Menu::create([
+                'menu_group_id' => $menuGroupId,
+                'nama' => $menuName,
+                'nama_en' => $menuNameEn,
+                'icon' => $icon,
+                'urutan' => $maxMenuOrder + 1,
+                'is_tampil' => 1,
+            ]);
+        } else {
+            // Get existing menus for the selected group
+            $menus = Menu::where('menu_group_id', $menuGroupId)->get()->pluck('nama', 'id')->toArray();
+            $menuId = select('Pilih menu untuk modul ini:', $menus);
+            $menu = Menu::find($menuId);
         }
+        
+        // Get routing for the module
+        $routing = text('Masukkan routing untuk modul ini:', $moduleName . '.index', $moduleName . '.index');
+        
+        // Create the module entry with the index permission
+        $maxModuleOrder = Module::where('menu_id', $menu->id)->max('urutan') ?? 0;
+        
+        // Use the index permission as the main permission for display
+        $mainPermission = $permissions['index'];
+        
+        // Create module entry
+        Module::create([
+            'menu_id' => $menu->id,
+            'nama' => ucwords(str_replace('_', ' ', $moduleName)),
+            'routing' => $routing,
+            'permission' => $mainPermission,
+            'urutan' => $maxModuleOrder + 1,
+            'is_tampil' => 1,
+        ]);
+        
+        $this->info('Menu dan module untuk ' . $moduleName . ' telah dibuat.');
     }
 
     public function generate($module)

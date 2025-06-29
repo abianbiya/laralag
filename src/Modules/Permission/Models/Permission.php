@@ -13,7 +13,7 @@ class Permission extends Model
 	use SoftDeletes, HasUuids;
 
 	protected $table      = 'permission';
-	protected $fillable   = ['slug','nama','action'];
+	protected $fillable   = ['slug', 'nama', 'group', 'action'];
 
 	public static function boot()
 	{
@@ -37,6 +37,4 @@ class Permission extends Model
 			$model->save();
 		});
 	}
-
-	
 }
