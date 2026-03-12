@@ -45,7 +45,7 @@
                     <td class="table-secondary">
                         {{ customButton('menu.create', tooltip: 'Tambah Menu di '.$menuGroup->nama, routeParams: ['menuGroup' => $menuGroup->id], icon: "bi bi-plus-lg") }}
                         {{ customButton('menugroup.edit', $menuGroup->id, tooltip: "Edit Group Menu", icon: "bi bi-pencil", class: 'btn-outline-warning') }}
-                        {{ customButton('menugroup.destroy', $menuGroup->id, tooltip: "Hapus Group Menu", icon: "bi bi-trash", class: 'btn-outline-danger') }}
+                        {{ actionButton('menugroup.destroy', $menuGroup->id, 'Group Menu') }}
                     </td>
                 </tr>
                 @forelse ($menuGroup->menu->sortBy('urutan') as $key => $item)

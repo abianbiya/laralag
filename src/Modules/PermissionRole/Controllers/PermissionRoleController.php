@@ -1,7 +1,7 @@
 <?php
 namespace Abianbiya\Laralag\Modules\PermissionRole\Controllers;
 
-use Form;
+
 use Abianbiya\Laralag\Helpers\Logger;
 use Illuminate\Http\Request;
 use Abianbiya\Laralag\Modules\Log\Models\Log;
@@ -28,7 +28,7 @@ class PermissionRoleController extends Controller
 		$query = PermissionRole::query();
 		if($request->has('search')){
 			$search = $request->get('search');
-			$query->whereAny(['Permission', 'Role', ], 'like', "%$search%");
+			$query->whereAny(['permission_id', 'role_id'], 'like', "%$search%");
 		}
 		$data['data'] = $query->paginate(10)->withQueryString();
 
@@ -51,7 +51,7 @@ class PermissionRoleController extends Controller
 		return view('PermissionRole::permissionrole_create', array_merge($data, ['title' => $this->title]));
 	}
 
-	function store(Request $request)
+	public function store(Request $request)
 	{
 		$request->validate([
 			'permission_id' => 'required|string',
@@ -96,7 +96,7 @@ class PermissionRoleController extends Controller
 		return view('PermissionRole::permissionrole_update', array_merge($data, ['title' => $this->title]));
 	}
 
-	public function update(Request $request, $id)
+	public function update(Request $request, PermissionRole $permissionrole)
 	{
 		$request->validate([
 			'permission_id' => 'required|string',
@@ -104,7 +104,7 @@ class PermissionRoleController extends Controller
 			
 		]);
 		
-		$permissionrole = PermissionRole::find($id);
+
 		$permissionrole->permission_id = $request->input("permission_id");
         $permissionrole->role_id = $request->input("role_id");
         $permissionrole->save();
@@ -115,9 +115,8 @@ class PermissionRoleController extends Controller
 		return redirect()->route($request->back ?? 'permissionrole.index')->with('message_success', 'Permission Role berhasil diubah!');
 	}
 
-	public function destroy(Request $request, $id)
+	public function destroy(Request $request, PermissionRole $permissionrole)
 	{
-		$permissionrole = PermissionRole::find($id);
 		$permissionrole->delete();
 
 		$text = 'menghapus '.$this->title;//.' '.$permissionrole->what;

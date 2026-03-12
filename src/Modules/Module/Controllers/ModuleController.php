@@ -1,7 +1,7 @@
 <?php
 namespace Abianbiya\Laralag\Modules\Module\Controllers;
 
-use Form;
+
 use Abianbiya\Laralag\Helpers\Logger;
 use Illuminate\Http\Request;
 use Abianbiya\Laralag\Modules\Log\Models\Log;
@@ -27,7 +27,7 @@ class ModuleController extends Controller
 		$query = Module::query();
 		if($request->has('search')){
 			$search = $request->get('search');
-			$query->whereAny(['Menu', 'Nama', 'Routing', 'Permission', 'Urutan', 'Is Tampil', ], 'like', "%$search%");
+			$query->whereAny(['menu_id', 'nama', 'routing', 'permission', 'urutan', 'is_tampil'], 'like', "%$search%");
 		}
 		$data['data'] = $query->paginate(10)->withQueryString();
 
@@ -54,7 +54,7 @@ class ModuleController extends Controller
 		return view('Module::module_create', array_merge($data, ['title' => $this->title]));
 	}
 
-	function store(Request $request)
+	public function store(Request $request)
 	{
 		$request->validate([
 			'menu_id' => 'required|string',
@@ -111,7 +111,7 @@ class ModuleController extends Controller
 		return view('Module::module_update', array_merge($data, ['title' => $this->title]));
 	}
 
-	public function update(Request $request, $id)
+	public function update(Request $request, Module $module)
 	{
 		$request->validate([
 			'menu_id' => 'required|string',
@@ -123,7 +123,7 @@ class ModuleController extends Controller
 			
 		]);
 		
-		$module = Module::find($id);
+
 		$module->menu_id = $request->input("menu_id");
         $module->nama = $request->input("nama");
         $module->routing = $request->input("routing");
@@ -138,9 +138,8 @@ class ModuleController extends Controller
 		return redirect()->route($request->back ?? 'module.index')->with('message_success', 'Module berhasil diubah!');
 	}
 
-	public function destroy(Request $request, $id)
+	public function destroy(Request $request, Module $module)
 	{
-		$module = Module::find($id);
 		$module->delete();
 
 		$text = 'menghapus '.$this->title;//.' '.$module->what;

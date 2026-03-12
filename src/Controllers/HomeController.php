@@ -2,10 +2,12 @@
 
 namespace Abianbiya\Laralag\Controllers;
 
+use App\Http\Controllers\Controller;
+use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 
 class HomeController extends Controller
@@ -23,28 +25,28 @@ class HomeController extends Controller
     /**
      * Show the application dashboard.
      *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return Renderable
      */
-
     public function home()
     {
-        if(config('laralag.has_landing') == false){
+        if (config('laralag.has_landing') == false) {
             return redirect()->route('login');
         }
+
         return view('welcome');
     }
 
     /**
      * Show the application dashboard.
      *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return Renderable
      */
-
     public function root()
     {
-        if(config('laralag.home_route') != 'dashboard.index'){
+        if (config('laralag.home_route') != 'dashboard.index') {
             return redirect()->route(config('laralag.home_route'));
         }
+
         return view('Laralag::pages.dashboard');
     }
 
@@ -53,6 +55,7 @@ class HomeController extends Controller
         if (view()->exists($request->path())) {
             return view($request->path());
         }
+
         return abort(404);
     }
 
@@ -62,26 +65,34 @@ class HomeController extends Controller
             App::setLocale($locale);
             Session::put('lang', $locale);
             Session::save();
+
             return redirect()->back()->with('locale', $locale);
         } else {
             return redirect()->back();
         }
     }
 
-    public function logout() {
+    public function logout()
+    {
         Auth::logout();
-        if(config('laralag.has_landing') == true){
-            return redirect(route(config('laralag.landing_route', 'home.index')));
-        }else{
-            return redirect(route('login'));
+        $landingRoute = config('laralag.landing_route', 'home.index');
+        if (config('laralag.has_landing') == true && Route::has($landingRoute)) {
+            return redirect()->route($landingRoute);
         }
+
+        return redirect()->route('login');
     }
 
-    public function changeRole($slugRole, $scope = null) {
+    public function changeRole($slugRole, $scope = null)
+    {
         $user = Auth::user();
         $user->setActiveRole($slugRole, $scope);
 
+        $homeRoute = config('laralag.home_route', 'dashboard.index');
+        if (Route::has($homeRoute)) {
+            return redirect()->route($homeRoute)->with('message_success', "Berhasil mengganti role ke $slugRole");
+        }
 
-        return redirect()->route(config('laralag.home_route', 'home.index'))->with('message_success', "Berhasil mengganti role ke $slugRole");
+        return redirect('/')->with('message_success', "Berhasil mengganti role ke $slugRole");
     }
 }

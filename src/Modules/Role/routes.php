@@ -11,5 +11,5 @@ Route::controller(RoleController::class)->middleware(['web','auth'])->group(func
 	Route::get('/role/{role}/edit', 'edit')->name('role.edit')->middleware('permission:role.edit');
 	Route::patch('/role/{role}', 'update')->name('role.update')->middleware('permission:role.update');
 	Route::post('/role/permission/{role}', 'updatePermission')->name('role.permission.update')->middleware('permission:role.permission.update');
-	Route::get('/role/{role}/delete', 'destroy')->name('role.destroy')->middleware('permission:role.destroy');
+	Route::delete('/role/{role}', 'destroy')->name('role.destroy')->middleware('permission:role.destroy');
 });

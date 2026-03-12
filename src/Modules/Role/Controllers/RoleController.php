@@ -1,7 +1,7 @@
 <?php
 namespace Abianbiya\Laralag\Modules\Role\Controllers;
 
-use Form;
+
 use Abianbiya\Laralag\Helpers\Logger;
 use Abianbiya\Laralag\Modules\Permission\Models\Permission;
 use Illuminate\Http\Request;
@@ -28,7 +28,7 @@ class RoleController extends Controller
 		$query = Role::query();
 		if($request->has('search')){
 			$search = $request->get('search');
-			$query->whereAny(['Slug', 'Nama', 'Tags', ], 'like', "%$search%");
+			$query->whereAny(['slug', 'nama', 'tags'], 'like', "%$search%");
 		}
 		$data['data'] = $query->paginate(10)->withQueryString();
 
@@ -50,7 +50,7 @@ class RoleController extends Controller
 		return view('Role::role_create', array_merge($data, ['title' => $this->title]));
 	}
 
-	function store(Request $request)
+	public function store(Request $request)
 	{
 		$request->validate([
 			'slug' => 'required|string',
@@ -98,7 +98,7 @@ class RoleController extends Controller
 		return view('Role::role_update', array_merge($data, ['title' => $this->title]));
 	}
 
-	public function update(Request $request, $id)
+	public function update(Request $request, Role $role)
 	{
 		$request->validate([
 			'slug' => 'required|string',
@@ -107,7 +107,6 @@ class RoleController extends Controller
 			
 		]);
 		
-		$role = Role::find($id);
 		$role->slug = $request->input("slug");
         $role->nama = $request->input("nama");
         $role->tags = $request->input("tags");
@@ -119,9 +118,8 @@ class RoleController extends Controller
 		return redirect()->route('role.index')->with('message_success', 'Role berhasil diubah!');
 	}
 
-	public function destroy(Request $request, $id)
+	public function destroy(Request $request, Role $role)
 	{
-		$role = Role::find($id);
 		$role->delete();
 
 		$text = 'menghapus '.$this->title;//.' '.$role->what;

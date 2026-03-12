@@ -10,5 +10,5 @@ Route::controller(MenuGroupController::class)->middleware(['web','auth'])->group
 	Route::get('/menugroup/{menugroup}', 'show')->name('menugroup.show')->middleware('permission:menugroup.show');
 	Route::get('/menugroup/{menugroup}/edit', 'edit')->name('menugroup.edit')->middleware('permission:menugroup.edit');
 	Route::patch('/menugroup/{menugroup}', 'update')->name('menugroup.update')->middleware('permission:menugroup.update');
-	Route::get('/menugroup/{menugroup}/delete', 'destroy')->name('menugroup.destroy')->middleware('permission:menugroup.destroy');
+	Route::delete('/menugroup/{menugroup}', 'destroy')->name('menugroup.destroy')->middleware('permission:menugroup.destroy');
 });

@@ -1,7 +1,7 @@
 <?php
 namespace Abianbiya\Laralag\Modules\Menu\Controllers;
 
-use Form;
+
 use Abianbiya\Laralag\Helpers\Logger;
 use Illuminate\Http\Request;
 use Abianbiya\Laralag\Modules\Log\Models\Log;
@@ -49,7 +49,7 @@ class MenuController extends Controller
 		return view('Menu::menu_create', array_merge($data, ['title' => $this->title]));
 	}
 
-	function store(Request $request)
+	public function store(Request $request)
 	{
 		$request->validate([
 			'menu_group_id' => 'required|string',
@@ -106,7 +106,7 @@ class MenuController extends Controller
 		return view('Menu::menu_update', array_merge($data, ['title' => $this->title]));
 	}
 
-	public function update(Request $request, $id)
+	public function update(Request $request, Menu $menu)
 	{
 		$request->validate([
 			'menu_group_id' => 'required|string',
@@ -118,7 +118,7 @@ class MenuController extends Controller
 			
 		]);
 		
-		$menu = Menu::find($id);
+
 		$menu->menu_group_id = $request->input("menu_group_id");
         $menu->nama = $request->input("nama");
         $menu->nama_en = $request->input("nama_en");
@@ -133,9 +133,8 @@ class MenuController extends Controller
 		return redirect()->route('menu.index')->with('message_success', 'Menu berhasil diubah!');
 	}
 
-	public function destroy(Request $request, $id)
+	public function destroy(Request $request, Menu $menu)
 	{
-		$menu = Menu::find($id);
 		$menu->delete();
 
 		$text = 'menghapus '.$this->title;//.' '.$menu->what;

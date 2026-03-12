@@ -3,7 +3,7 @@
 namespace Abianbiya\Laralag\Traits;
 
 use Illuminate\Support\Facades\Session;
-use Abianbiya\Laralag\Models\Permission;
+use Abianbiya\Laralag\Modules\Permission\Models\Permission;
 use Abianbiya\Laralag\Modules\Role\Models\Role;
 use Abianbiya\Laralag\Modules\Scope\Models\Scope;
 use Abianbiya\Laralag\Modules\RoleUser\Models\RoleUser;

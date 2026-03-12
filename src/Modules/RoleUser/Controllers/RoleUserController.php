@@ -28,7 +28,7 @@ class RoleUserController extends Controller
 		$query = RoleUser::with('role');
 		if($request->has('search')){
 			$search = $request->get('search');
-			$query->whereAny(['Role', 'User', 'Scope', ], 'like', "%$search%");
+			$query->whereAny(['role_id', 'user_id', 'scope_id'], 'like', "%$search%");
 		}
 		$data['data'] = $query->paginate(10)->withQueryString();
 
@@ -59,7 +59,7 @@ class RoleUserController extends Controller
 		return view('RoleUser::roleuser_create', array_merge($data, ['title' => $this->title]));
 	}
 
-	function store(Request $request)
+	public function store(Request $request)
 	{
 		$request->validate([
 			'role_id' => 'required|string',
@@ -110,7 +110,7 @@ class RoleUserController extends Controller
 		return view('RoleUser::roleuser_update', array_merge($data, ['title' => $this->title]));
 	}
 
-	public function update(Request $request, $id)
+	public function update(Request $request, RoleUser $roleuser)
 	{
 		$request->validate([
 			'role_id' => 'required|string',
@@ -119,7 +119,7 @@ class RoleUserController extends Controller
 			
 		]);
 		
-		$roleuser = RoleUser::find($id);
+
 		$roleuser->role_id = $request->input("role_id");
         $roleuser->user_id = $request->input("user_id");
         $roleuser->scope_id = $request->input("scope_id");
@@ -131,12 +131,11 @@ class RoleUserController extends Controller
 		return redirect()->route($request->back ?? 'roleuser.index')->with('message_success', 'Role User berhasil diubah!');
 	}
 
-	public function destroy(Request $request, $id)
+	public function destroy(Request $request, RoleUser $roleuser)
 	{
 		// $roleuser = RoleUser::whereUserId($userId)->whereRoleId($roleId)->when($request->filled('scopeId'), function($q){
 		// 	$q->where('scope_id', request('scopeId'));
 		// })->first();
-		$roleuser = RoleUser::find($id);
 		$roleuser->delete();
 
 		$text = 'menghapus '.$this->title;//.' '.$roleuser->what;

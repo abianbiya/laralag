@@ -39,7 +39,24 @@
             showCloseButton: true
             }).then((willConfirm) => {
                 if (willConfirm.isConfirmed) {
-                    window.location.href = href;
+                    var form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = href;
+                    
+                    var methodField = document.createElement('input');
+                    methodField.type = 'hidden';
+                    methodField.name = '_method';
+                    methodField.value = 'DELETE';
+                    form.appendChild(methodField);
+                    
+                    var csrfField = document.createElement('input');
+                    csrfField.type = 'hidden';
+                    csrfField.name = '_token';
+                    csrfField.value = '{{ csrf_token() }}';
+                    form.appendChild(csrfField);
+                    
+                    document.body.appendChild(form);
+                    form.submit();
                 }
             });
         });

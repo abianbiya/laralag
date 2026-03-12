@@ -2,22 +2,26 @@
 
 namespace Abianbiya\Laralag\Commands;
 
-use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Abianbiya\Laralag\Traits\IntrospectTable;
 
 class GenerateApiModule extends Command
 {
+    use IntrospectTable;
+
     protected $files;
-    public $baseDir = __DIR__ . '/../../resources/';
+
+    public $baseDir = __DIR__.'/../../resources/';
 
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'lag:api {module}';
+    protected $signature = 'lag:api {module} {--force}';
 
     /**
      * The console command description.
@@ -45,26 +49,32 @@ class GenerateApiModule extends Command
     public function handle()
     {
         $module = $this->getNameInput();
-        $modulePath = base_path('app/Modules/' . $module);
-        $controllerName = $module . 'ApiController';
-        $controllerPath = $modulePath . '/Controllers/' . $controllerName . '.php';
-        $routePath = $modulePath . '/routes.php';
+        $modulePath = base_path('app/Modules/'.$module);
+        $controllerName = $module.'ApiController';
+        $controllerPath = $modulePath.'/Controllers/'.$controllerName.'.php';
+        $routePath = $modulePath.'/routes.php';
 
-        if (!is_dir($modulePath)) {
+        if (! is_dir($modulePath)) {
             $this->error('Module does not exist!');
+
             return false;
         }
 
-        if ($this->files->exists($controllerPath)) {
-            $this->error('API Controller already exists!');
+        if ($this->files->exists($controllerPath) && !$this->option('force')) {
+            $this->error('API Controller already exists! Use --force to overwrite.');
+
             return false;
+        }
+
+        if ($this->files->exists($controllerPath) && $this->option('force')) {
+            $this->warn("Overwriting existing API controller: $controllerName");
         }
 
         $this->makeDirectory($controllerPath);
         $this->files->put($controllerPath, $this->buildClassController($module, $controllerName));
 
         $routeDefinition = $this->buildClassRoute($module, $controllerName);
-        if (!empty($routeDefinition)) {
+        if (! empty($routeDefinition)) {
             if ($this->files->exists($routePath)) {
                 $this->files->append($routePath, $routeDefinition);
             } else {
@@ -72,7 +82,7 @@ class GenerateApiModule extends Command
             }
         }
 
-        $this->info('API Controller and Route for module ' . $module . ' created successfully.');
+        $this->info('API Controller and Route for module '.$module.' created successfully.');
     }
 
     protected function getNameInput()
@@ -82,16 +92,17 @@ class GenerateApiModule extends Command
 
     protected function makeDirectory($path)
     {
-        if (!$this->files->isDirectory(dirname($path))) {
+        if (! $this->files->isDirectory(dirname($path))) {
             $this->files->makeDirectory(dirname($path), 0777, true, true);
         }
+
         return $path;
     }
 
     protected function buildClassController($module, $controllerName)
     {
         $stub = $this->files->get($this->baseDir.'stubs/controller.api.stub');
-        $namespace = 'App\\Modules\\' . $module . '\\Controllers';
+        $namespace = 'App\\Modules\\'.$module.'\\Controllers';
         $model = Str::studly($module);
         $slug = Str::kebab($module);
         $modelCamel = Str::camel($module);
@@ -104,7 +115,7 @@ class GenerateApiModule extends Command
             'dummy-slug',
             'DummyModel',
             'dummyModel',
-            'moduleTitle'
+            'moduleTitle',
         ], [
             $namespace,
             'App\\',
@@ -123,11 +134,19 @@ class GenerateApiModule extends Command
         $exceptField = ['id', 'created_at', 'updated_at', 'deleted_at', 'created_by', 'updated_by', 'deleted_by'];
 
         foreach ($fields['kolom'] as $key => $value) {
-            if (!in_array($key, $exceptField)) {
-                $modelField .= "\$$modelCamel->$key = \$request->input('$key');
-        ";
-                $formValidation .= "'$key' => 'required',
-            ";
+            if (! in_array($key, $exceptField)) {
+                // Type-aware and nullability-aware validation
+                $nullable = $value['is_nullable'] ? 'nullable' : 'required';
+                $type = match($value['tipe_data']) {
+                    'integer', 'bigint', 'tinyint', 'smallint' => 'numeric',
+                    'date'     => 'date',
+                    'datetime' => 'date',
+                    default    => 'string',
+                };
+                $formValidation .= "'$key' => '$nullable|$type',\n            ";
+
+                // Model field assignment
+                $modelField .= "\$$modelCamel->$key = \$request->input('$key');\n        ";
             }
         }
 
@@ -135,46 +154,6 @@ class GenerateApiModule extends Command
         $stub = str_replace('//FormValidation//', $formValidation, $stub);
 
         return $this->formatCode($stub);
-    }
-
-    private function getTableInfo($namaModel)
-    {
-        $tabel = Str::snake($namaModel);
-        $database = env('DB_DATABASE', config('database.connections.' . config('database.default') . '.database'));
-        $ret['tabel'] = $tabel;
-
-        $q = DB::select("SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = '$database' AND TABLE_NAME = '$tabel'");
-
-        if (empty($q)) {
-            die("Table $tabel not found.\n");
-        }
-
-        $primary_key = [];
-        $counter_primary = 0;
-
-        foreach ($q as $row) {
-            $ret['kolom'][$row->COLUMN_NAME] = [
-                'is_nullable' => ($row->IS_NULLABLE == "NO" ? false : true),
-                'tipe_data' => $row->DATA_TYPE,
-                'length' => $row->CHARACTER_MAXIMUM_LENGTH,
-                'catatan' => $row->COLUMN_COMMENT,
-                'is_primary' => $row->COLUMN_KEY == "PRI",
-                'referensi' => null,
-            ];
-
-            if ($row->COLUMN_KEY == "PRI") {
-                $counter_primary++;
-                $ret['primary_key'][] = $row->COLUMN_NAME;
-            }
-        }
-
-        $q = DB::select("SELECT * FROM information_schema.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA = '$database' AND TABLE_NAME = '$tabel' AND REFERENCED_TABLE_NAME IS NOT NULL");
-
-        foreach ($q as $row) {
-            $ret['kolom'][$row->COLUMN_NAME]['referensi'] = $row->REFERENCED_TABLE_NAME;
-        }
-
-        return $ret;
     }
 
     protected function buildClassRoute($module, $controllerName)
@@ -185,21 +164,22 @@ class GenerateApiModule extends Command
         $routeDefinition = str_replace([
             'dummy-slug',
             'DummyClass',
-            'DummyNamespace'
+            'DummyNamespace',
         ], [
             $slug,
             $controllerName,
-            'App\\Modules\\' . $module . '\\Controllers'
+            'App\\Modules\\'.$module.'\\Controllers',
         ], $stub);
 
-        $routePath = base_path('app/Modules/' . $module . '/routes.php');
+        $routePath = base_path('app/Modules/'.$module.'/routes.php');
 
         if ($this->files->exists($routePath)) {
             $existingRoutes = $this->files->get($routePath);
 
             // Check if the route already exists in the file
             if (strpos($existingRoutes, $routeDefinition) !== false) {
-                $this->info('Route already exists in ' . $routePath);
+                $this->info('Route already exists in '.$routePath);
+
                 return '';
             }
         }

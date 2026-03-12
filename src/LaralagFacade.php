@@ -5,7 +5,7 @@ namespace Abianbiya\Laralag;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @see \Abianbiya\Laralag\Skeleton\SkeletonClass
+ * @see \Abianbiya\Laralag\Laralag
  */
 class LaralagFacade extends Facade
 {

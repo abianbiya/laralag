@@ -1,7 +1,7 @@
 <?php
 namespace Abianbiya\Laralag\Modules\MenuGroup\Controllers;
 
-use Form;
+
 use Abianbiya\Laralag\Helpers\Logger;
 use Illuminate\Http\Request;
 use Abianbiya\Laralag\Modules\Log\Models\Log;
@@ -26,7 +26,7 @@ class MenuGroupController extends Controller
 		$query = MenuGroup::query();
 		if($request->has('search')){
 			$search = $request->get('search');
-			$query->whereAny(['Nama', 'Nama En', 'Urutan', 'Is Tampil', ], 'like', "%$search%");
+			$query->whereAny(['nama', 'nama_en', 'urutan', 'is_tampil'], 'like', "%$search%");
 		}
 		$data['data'] = $query->paginate(10)->withQueryString();
 
@@ -50,7 +50,7 @@ class MenuGroupController extends Controller
 		return view('MenuGroup::menugroup_create', array_merge($data, ['title' => $this->title]));
 	}
 
-	function store(Request $request)
+	public function store(Request $request)
 	{
 		$request->validate([
 			'nama' => 'nullable|string',
@@ -100,7 +100,7 @@ class MenuGroupController extends Controller
 		return view('MenuGroup::menugroup_update', array_merge($data, ['title' => $this->title]));
 	}
 
-	public function update(Request $request, $id)
+	public function update(Request $request, MenuGroup $menugroup)
 	{
 		$request->validate([
 			'nama' => 'nullable|string',
@@ -110,7 +110,7 @@ class MenuGroupController extends Controller
 			
 		]);
 		
-		$menugroup = MenuGroup::find($id);
+
 		$menugroup->nama = $request->input("nama");
         $menugroup->nama_en = $request->input("nama_en");
         $menugroup->urutan = $request->input("urutan");
@@ -123,9 +123,8 @@ class MenuGroupController extends Controller
 		return redirect()->route($request->back ?? 'menugroup.index')->with('message_success', 'Menu Group berhasil diubah!');
 	}
 
-	public function destroy(Request $request, $id)
+	public function destroy(Request $request, MenuGroup $menugroup)
 	{
-		$menugroup = MenuGroup::find($id);
 		$menugroup->delete();
 
 		$text = 'menghapus '.$this->title;//.' '.$menugroup->what;

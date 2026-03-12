@@ -10,5 +10,5 @@ Route::controller(RoleUserController::class)->middleware(['web','auth'])->group(
 	Route::get('/roleuser/{roleuser}', 'show')->name('roleuser.show')->middleware('permission:roleuser.show');
 	Route::get('/roleuser/{roleuser}/edit', 'edit')->name('roleuser.edit')->middleware('permission:roleuser.edit');
 	Route::patch('/roleuser/{roleuser}', 'update')->name('roleuser.update')->middleware('permission:roleuser.update');
-	Route::get('/roleuser/{roleuser}/delete', 'destroy')->name('roleuser.destroy')->middleware('permission:roleuser.destroy');
+	Route::delete('/roleuser/{roleuser}', 'destroy')->name('roleuser.destroy')->middleware('permission:roleuser.destroy');
 });

@@ -10,5 +10,5 @@ Route::controller(ModuleController::class)->middleware(['web','auth'])->group(fu
 	Route::get('/module/{module}', 'show')->name('module.show')->middleware('permission:module.show');
 	Route::get('/module/{module}/edit', 'edit')->name('module.edit')->middleware('permission:module.edit');
 	Route::patch('/module/{module}', 'update')->name('module.update')->middleware('permission:module.update');
-	Route::get('/module/{module}/delete', 'destroy')->name('module.destroy')->middleware('permission:module.destroy');
+	Route::delete('/module/{module}', 'destroy')->name('module.destroy')->middleware('permission:module.destroy');
 });

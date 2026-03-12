@@ -11,6 +11,9 @@ use Abianbiya\Laralag\Modules\Menu\Models\Menu;
 use Abianbiya\Laralag\Modules\Module\Models\Module;
 use Abianbiya\Laralag\Modules\MenuGroup\Models\MenuGroup;
 use Abianbiya\Laralag\Modules\Permission\Models\Permission;
+use Abianbiya\Laralag\Modules\PermissionRole\Models\PermissionRole;
+use Abianbiya\Laralag\Modules\Role\Models\Role;
+use Abianbiya\Laralag\Traits\IntrospectTable;
 
 use function Laravel\Prompts\text;
 use function Laravel\Prompts\select;
@@ -18,9 +21,11 @@ use function Laravel\Prompts\confirm;
 
 class GenerateModule extends Command
 {
+    use IntrospectTable;
+
     protected $files;
-    protected $signature = 'lag:module {name} {--menu} {--menuOnly} {--api} {--table=} {--hasFile}';
-    protected $description = 'Make you fuckin crud from just a table name';
+    protected $signature = 'lag:module {name} {--no-menu} {--menuOnly} {--api} {--table=} {--hasFile} {--force}';
+    protected $description = 'Generate a full CRUD module (controller, model, views, routes, permissions) from a database table';
     protected $resourcePath;
     private $fields = [];
     private $types = [];
@@ -61,6 +66,10 @@ class GenerateModule extends Command
         if ($withApi) {
             Artisan::call('lag:api ' . $module);
         }
+
+        $this->info('Running optimize...');
+        Artisan::call('optimize');
+        $this->info(Artisan::output());
     }
 
     protected function createMenuAndPermissions($module)
@@ -120,12 +129,27 @@ class GenerateModule extends Command
             ]);
         }
 
-        // Optionally link these permissions to a menu item if --menu was specified
-        if ($this->option('menu')) {
+        // Assign all new permissions to the Root role
+        $rootRole = Role::where('slug', 'root')->first();
+        if ($rootRole) {
+            foreach ($permissions as $permSlug) {
+                $permission = Permission::where('slug', $permSlug)->first();
+                if ($permission) {
+                    PermissionRole::firstOrCreate([
+                        'permission_id' => $permission->id,
+                        'role_id' => $rootRole->id,
+                    ]);
+                }
+            }
+            $this->info('Permissions assigned to Root role.');
+        }
+
+        // Create menu by default, skip only if --no-menu is specified
+        if (!$this->option('no-menu')) {
             $this->createOrUpdateMenu($moduleName, $permissions);
         }
 
-        $this->info('Permissions (and optionally menu) for ' . $module . ' have been created.');
+        $this->info('Permissions (and menu) for ' . $module . ' have been created.');
     }
 
     protected function createOrUpdateMenu($moduleName, $permissions)
@@ -203,8 +227,8 @@ class GenerateModule extends Command
         $pathRoute = $this->getPath($nameRoute) . '.php';
 
 
-        if ($this->alreadyExists($module)) {
-            $this->error($this->type . ' already exists!');
+        if ($this->alreadyExists($module) && !$this->option('force')) {
+            $this->error($this->type . ' already exists! Use --force to overwrite.');
             return false;
         }
 
@@ -213,6 +237,10 @@ class GenerateModule extends Command
         $this->makeDirectory($pathModel);
         $this->makeDirectory($pathView);
         $this->makeDirectory($pathRoute);
+
+        if ($this->option('force')) {
+            $this->warn("Overwriting existing module: $module");
+        }
 
         // simpan files
         $this->files->put($pathController, $this->buildClassController($nameController));
@@ -289,7 +317,11 @@ class GenerateModule extends Command
         $nominalSanitizer= '';
         $counter            = 0;
 
-        $fields = $this->getTableInfo($module);
+        $fields = $this->getTableInfo($module, $this->option('table'));
+
+        if (empty($fields)) {
+            return $stub;
+        }
 
         $except_field = ['id', 'created_at', 'updated_at', 'deleted_at', 'created_by', 'updated_by', 'deleted_by'];
         
@@ -350,7 +382,7 @@ class GenerateModule extends Command
         $stub = str_replace('//ModelField//', $model_field, $stub);
         $stub = str_replace('"ColumnJudul"', $column_title, $stub);
         $stub = str_replace('"AjaxField"', $ajax_field, $stub);
-        $stub = str_replace('SearchableColumn', $column_title, $stub);
+        $stub = str_replace('SearchableColumn', $ajax_field, $stub);
         $stub = str_replace('//FormValidation//', $form_validation, $stub);
         $stub = str_replace('//FormReference//', $addRef, $stub);
         $stub = str_replace('//ImportReference//', $useRef, $stub);
@@ -364,7 +396,7 @@ class GenerateModule extends Command
         $class = str_replace($this->getNamespace($name) . '\\', '', $name);
 
         $fillables = '';
-        $fields = $this->getTableInfo($this->module);
+        $fields = $this->getTableInfo($this->module, $this->option('table') ?? null);
 
         $except_field = ['id', 'created_at', 'updated_at', 'deleted_at', 'created_by', 'updated_by', 'deleted_by'];
         foreach ($fields['kolom'] as $key => $value) {
@@ -411,7 +443,7 @@ class GenerateModule extends Command
             if(str($isi)->endsWith('_id')){
                 $database = env('DB_DATABASE') ?: config('database.connections.' . config('database.default') . '.database');
                 $isi = str($isi)->replace('_id', '');
-                $relatedDescColumn = DB::select("SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = '$database' AND TABLE_NAME = '$isi' AND DATA_TYPE IN ('varchar', 'char') AND COLUMN_NAME <> 'id' LIMIT 1");
+                $relatedDescColumn = DB::select("SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ? AND DATA_TYPE IN ('varchar', 'char') AND COLUMN_NAME <> 'id' LIMIT 1", [$database, (string) $isi]);
                 $relatedDescColumn = $relatedDescColumn[0]->COLUMN_NAME ?? 'nama_'.$isi;
                 $isi = $isi->camel()->append('->')->append($relatedDescColumn);
             }
@@ -439,24 +471,47 @@ class GenerateModule extends Command
     {
         $stub = $this->files->get($this->resourcePath . '/detail.plain.stub');
         $class = str_replace($this->getNamespace($name) . '\\', '', $name);
+        $varName = strtolower($class);
 
-        $labelData = '';
-        $valueData = '';
         $detailData = '';
-        foreach ($this->fields as $key => $value) {
-            $label = $value;
-            if (Str::contains($value, '_id')) {
-                // ubah kalo foreign key ke relation
-                $label = str_replace('_id', '', $value);
-                $value = Str::camel($label) . "->id";
-            }
-            $labelData = "<th width='25%'>" . str_replace('_', ' ', Str::title($label)) . "</th>\n";
-            $valueData = "                  <td>{{ $" . strtolower($class) . "->$value }}</td>";
-            $detailData .= "<tr>
-                    ".$labelData . $valueData . "\n             </tr>" . PHP_EOL . "				";
+        $fields = $this->getTableInfo($this->module, $this->option('table') ?? null);
+
+        if (empty($fields)) {
+            $stub = str_replace('NamaModule', $varName, $stub);
+            $stub = str_replace('DetailData', '', $stub);
+            return $stub;
         }
 
-        $stub = str_replace('NamaModule', strtolower($class), $stub);
+        $except_field = ['created_at', 'updated_at', 'deleted_at', 'created_by', 'updated_by', 'deleted_by'];
+
+        foreach ($fields['kolom'] as $fieldName => $fieldInfo) {
+            if (in_array($fieldName, $except_field)) continue;
+
+            $label = Str::title(str_replace('_', ' ', str_replace('_id', '', $fieldName)));
+
+            // Resolve display value
+            if ($fieldInfo['referensi'] !== null) {
+                // Use the Eloquent relation method + description column
+                $relationMethod = Str::camel(str_replace('_id', '', $fieldName));
+                $descCol = $fieldInfo['referensi_desc_kolom'] ?? 'name';
+                $displayValue = "\\$$varName->{$relationMethod}->{$descCol}";
+            } elseif ($fieldInfo['tipe_data'] === 'date') {
+                $displayValue = "{{ tanggal(\\$$varName->$fieldName) }}";
+            } elseif ($fieldInfo['tipe_data'] === 'bigint') {
+                $displayValue = "{!! rupiah(\\$$varName->$fieldName) !!}";
+            } else {
+                $displayValue = "{{ \\$$varName->$fieldName }}";
+            }
+
+            // Wrap non-directive values in {{ }}
+            if (!Str::startsWith($displayValue, ['{{', '{!!'])) {
+                $displayValue = "{{ $displayValue }}";
+            }
+
+            $detailData .= "<tr>\n                    <th width='25%'>$label</th>\n                    <td>$displayValue</td>\n                </tr>" . PHP_EOL . "\t\t\t\t";
+        }
+
+        $stub = str_replace('NamaModule', $varName, $stub);
         $stub = str_replace('DetailData', $detailData, $stub);
         return $stub;
     }
@@ -494,64 +549,6 @@ class GenerateModule extends Command
     protected function getDefaultNamespace($rootNamespace, $name)
     {
         return $rootNamespace . '\Modules\\' . $name . '\\Controllers';
-    }
-
-    private function getTableInfo($namaModel)
-    {
-        $tabel = Str::snake($namaModel);
-        $database = env('DB_DATABASE') ?: config('database.connections.' . config('database.default') . '.database');
-        $ret['tabel'] = $tabel;
-
-        $q = DB::select("select * from information_schema.COLUMNS where TABLE_SCHEMA='" . $database . "' and TABLE_NAME='" . $tabel . "'");
-
-        if (empty($q)) {
-            if($this->option('table')){
-                $tabel = $this->option('table');
-                $q = DB::select("select * from information_schema.COLUMNS where TABLE_SCHEMA='" . $database . "' and TABLE_NAME='" . $tabel . "'");
-            }else{
-                die("Table $tabel not found. \n");
-            }
-        }
-        // dd(collect($q)->pluck('COLUMN_NAME'));
-
-        $primary_key = [];
-        $counter_primary = 0;
-
-        foreach ($q as $row) {
-            $ret['kolom'][$row->COLUMN_NAME] = [
-                'is_nullable' => ($row->IS_NULLABLE == "NO" ? false : true),
-                'tipe_data' => $row->DATA_TYPE,
-                'length' => $row->CHARACTER_MAXIMUM_LENGTH,
-                'catatan' => $row->COLUMN_COMMENT,
-                'is_primary' => $row->COLUMN_KEY == "PRI",
-                'referensi' => null,
-                'referensi_kolom' => null,
-                'referensi_desc_kolom' => null
-            ];
-
-            // Check if the column is potentially a foreign key based on its suffix
-            if (Str::endsWith($row->COLUMN_NAME, ['_id', '_slug'])) {
-                $relatedModel = Str::camel(Str::beforeLast($row->COLUMN_NAME, '_')); // Assumes the related table model is the prefix of '_id' or '_slug'
-                $relatedTable = Str::snake($relatedModel);
-                // Check if related table exists
-                $checkTableExist = DB::select("SELECT * FROM information_schema.tables WHERE table_schema = '$database' AND table_name = '$relatedTable' LIMIT 1");
-                if(empty($checkTableExist)) {
-                    $relatedModel = Str::camel(Str::beforeLast($row->COLUMN_NAME, '_id')); // Assumes the related table model is the prefix of '_id'
-                    $relatedTable = Str::snake($relatedModel.'_'.$row->COLUMN_NAME);
-                    $checkTableExist = DB::select("SELECT * FROM information_schema.tables WHERE table_schema = '$database' AND table_name = '$relatedTable' LIMIT 1");
-                }
-                
-                if (!empty($checkTableExist)) {
-                    $ret['kolom'][$row->COLUMN_NAME]['referensi'] = $relatedTable;
-                    // Assuming that the primary key of the related table is 'id' and description column could be 'name' or similar
-                    $ret['kolom'][$row->COLUMN_NAME]['referensi_kolom'] = 'id';
-                    $relatedDescColumn = DB::select("SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = '$database' AND TABLE_NAME = '$relatedTable' AND DATA_TYPE IN ('varchar', 'char') ORDER BY CHARACTER_MAXIMUM_LENGTH DESC LIMIT 1");
-                    $ret['kolom'][$row->COLUMN_NAME]['referensi_desc_kolom'] = $relatedDescColumn[0]->COLUMN_NAME ?? 'name';
-                }
-            }
-        }
-
-        return $ret;
     }
 
 

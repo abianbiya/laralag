@@ -4,5 +4,5 @@ namespace Abianbiya\Laralag;
 
 class Laralag
 {
-    // Build your next great package.
+    // This class is currently a placeholder for future core package functionality.
 }

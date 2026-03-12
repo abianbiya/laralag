@@ -10,5 +10,5 @@ Route::controller(PermissionController::class)->middleware(['web','auth'])->grou
 	Route::get('/permission/{permission}', 'show')->name('permission.show')->middleware('permission:permission.show');
 	Route::get('/permission/{permission}/edit', 'edit')->name('permission.edit')->middleware('permission:permission.edit');
 	Route::patch('/permission/{permission}', 'update')->name('permission.update')->middleware('permission:permission.update');
-	Route::get('/permission/{permission}/delete', 'destroy')->name('permission.destroy')->middleware('permission:permission.destroy');
+	Route::delete('/permission/{permission}', 'destroy')->name('permission.destroy')->middleware('permission:permission.destroy');
 });

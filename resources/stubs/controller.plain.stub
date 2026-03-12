@@ -43,7 +43,7 @@ class DummyClass extends Controller
 		return view('Kelas::selug_create', array_merge($data, ['title' => $this->title]));
 	}
 
-	function store(Request $request)
+	public function store(Request $request)
 	{
 		$request->validate([
 			//FormValidation//
@@ -80,13 +80,12 @@ class DummyClass extends Controller
 		return view('Kelas::selug_update', array_merge($data, ['title' => $this->title]));
 	}
 
-	public function update(Request $request, $id)
+	public function update(Request $request, Kelas $selug)
 	{
 		$request->validate([
 			//FormValidation//
 		]);
 		
-		$selug = Kelas::find($id);
 		//ModelField//$selug->save();
 
 
@@ -95,9 +94,8 @@ class DummyClass extends Controller
 		return redirect()->route($request->back ?? 'selug.index')->with('message_success', 'Title berhasil diubah!');
 	}
 
-	public function destroy(Request $request, $id)
+	public function destroy(Request $request, Kelas $selug)
 	{
-		$selug = Kelas::find($id);
 		$selug->delete();
 
 		$text = 'menghapus '.$this->title;//.' '.$selug->what;

@@ -1,7 +1,7 @@
 <?php
 namespace Abianbiya\Laralag\Modules\User\Controllers;
 
-use Form;
+
 use Abianbiya\Laralag\Modules\User\Models\User;
 use Abianbiya\Laralag\Helpers\Logger;
 use Illuminate\Http\Request;
@@ -25,7 +25,7 @@ class UserController extends Controller
 		$query = User::with('roleUser.role', 'roleUser.scope');
 		if($request->has('search')){
 			$search = $request->get('search');
-			$query->whereAny(['Username', 'Email', 'Name', 'Identitas'], 'like', "%$search%");
+			$query->whereAny(['username', 'email', 'name', 'identitas'], 'like', "%$search%");
 		}
 		$data['data'] = $query->paginate(10)->withQueryString();
 
@@ -48,7 +48,7 @@ class UserController extends Controller
 		return view('User::user_create', array_merge($data, ['title' => $this->title]));
 	}
 
-	function store(Request $request)
+	public function store(Request $request)
 	{
 		$request->validate([
 			'username' => 'required|string',
@@ -98,7 +98,7 @@ class UserController extends Controller
 		return view('User::user_update', array_merge($data, ['title' => $this->title]));
 	}
 
-	public function update(Request $request, $id)
+	public function update(Request $request, User $user)
 	{
 		$request->validate([
 			'username' => 'required|string',
@@ -108,7 +108,7 @@ class UserController extends Controller
 			'identitas' => 'nullable|string',
 		]);
 		
-		$user = User::find($id);
+
 		$user->username = $request->input("username");
         $user->email = $request->input("email");
         $user->name = $request->input("name");
@@ -122,9 +122,8 @@ class UserController extends Controller
 		return redirect()->route($request->back ?? 'user.index')->with('message_success', 'User berhasil diubah!');
 	}
 
-	public function destroy(Request $request, $id)
+	public function destroy(Request $request, User $user)
 	{
-		$user = User::find($id);
 		$user->delete();
 
 		$text = 'menghapus '.$this->title;//.' '.$user->what;

@@ -4,24 +4,23 @@ namespace DummyNamespace;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use App\Modules\DummyModel\Models\DummyModel;
 
 class DummyClass extends Controller
 {
-    public function index()
+    public function index(): JsonResponse
     {
-        $data = DummyModel::all();
+        $data = DummyModel::paginate(20);
 
-        $data = [
+        return response()->json([
             'success' => true,
             'message' => 'Berhasil mengambil data moduleTitle',
-            'data' => $data
-        ];
-
-        return response()->json($data);
+            'data' => $data,
+        ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $request->validate([
             //FormValidation//
@@ -31,59 +30,46 @@ class DummyClass extends Controller
         //ModelField//
         $dummyModel->save();
 
-        $data = [
+        return response()->json([
             'success' => true,
             'message' => 'Berhasil menyimpan data moduleTitle',
-            'data' => $dummyModel
-        ];
-
-        return response()->json($data);
+            'data' => $dummyModel,
+        ], 201);
     }
 
-    public function show($id)
+    public function show(DummyModel $dummyModel): JsonResponse
     {
-        $data = DummyModel::find($id);
-
-        $data = [
+        return response()->json([
             'success' => true,
             'message' => 'Berhasil mengambil detail moduleTitle',
-            'data' => $data
-        ];
-
-        return response()->json($data);
+            'data' => $dummyModel,
+        ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, DummyModel $dummyModel): JsonResponse
     {
         $request->validate([
             //FormValidation//
         ]);
 
-        $dummyModel = DummyModel::find($id);
         //ModelField//
         $dummyModel->save();
 
-        $data = [
+        return response()->json([
             'success' => true,
             'message' => 'Berhasil memperbarui data moduleTitle',
-            'data' => $dummyModel
-        ];
-
-        return response()->json($data);
+            'data' => $dummyModel,
+        ]);
     }
 
-    public function destroy($id)
+    public function destroy(DummyModel $dummyModel): JsonResponse
     {
-        $dummyModel = DummyModel::find($id);
-        
-        $data = [
-            'success' => true,
-            'message' => 'Berhasil menghapus data moduleTitle',
-            'data' => $dummyModel
-        ];
-
         $dummyModel->delete();
 
-        return response()->json($data);
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil menghapus data moduleTitle',
+            'data' => null,
+        ]);
     }
 }

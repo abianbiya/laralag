@@ -2,7 +2,6 @@
 
 namespace Abianbiya\Laralag;
 
-use App\Models\User;
 use Livewire\Livewire;
 use Abianbiya\Laralag\Laralag;
 use Illuminate\Routing\Router;
@@ -17,6 +16,7 @@ use Abianbiya\Laralag\Commands\SyncPermission;
 use Abianbiya\Laralag\View\Components\Sidebar;
 use Abianbiya\Laralag\Commands\RunLaralagSeeder;
 use Abianbiya\Laralag\Commands\GenerateApiModule;
+use Abianbiya\Laralag\Commands\GenerateMigration;
 use Abianbiya\Laralag\Middleware\CheckPermission;
 
 class LaralagServiceProvider extends ServiceProvider
@@ -79,9 +79,13 @@ class LaralagServiceProvider extends ServiceProvider
         // Register route middleware
         $router->aliasMiddleware('permission', CheckPermission::class);
 
-        Paginator::useBootstrap();
-        Gate::before(function (User $user, $ability) {
-            return $user->hasPermission($ability) ?: null;
+        if (config('laralag.use_bootstrap_pagination', true)) {
+            Paginator::useBootstrap();
+        }
+        Gate::before(function ($user, $ability) {
+            if (method_exists($user, 'hasPermission')) {
+                return $user->hasPermission($ability) ?: null;
+            }
         });
     }
 
@@ -91,6 +95,7 @@ class LaralagServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 GenerateApiModule::class,
+                GenerateMigration::class,
                 GenerateModule::class,
                 LaralagInstall::class,
                 RunLaralagSeeder::class,
@@ -123,7 +128,8 @@ class LaralagServiceProvider extends ServiceProvider
             // load views
             $viewdir = $module . '/Views';
             if (is_dir($viewdir)) {
-                $modulename = @end(explode("/", $module));
+                $parts = explode("/", $module);
+                $modulename = end($parts);
                 $this->loadViewsFrom($viewdir, $modulename);
             }
         }
@@ -148,7 +154,8 @@ class LaralagServiceProvider extends ServiceProvider
             // load views
             $viewdir = $module . '/Views';
             if (is_dir($viewdir)) {
-                $modulename = @end(explode("/", $module));
+                $parts = explode("/", $module);
+                $modulename = end($parts);
                 $this->loadViewsFrom($viewdir, $modulename);
             }
         }

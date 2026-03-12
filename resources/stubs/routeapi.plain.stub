@@ -1,15 +1,12 @@
+<?php
 
+use Illuminate\Support\Facades\Route;
+use DummyNamespace\DummyClass;
 
-Route::group(['namespace' => 'App\Modules'.$nama_modul.'\Controllers','prefix'=>'api/'.$slug, 'middleware' => 'auth.api'], function () use ($slug, $module) {
-
-	Route::get('/', $module.'ApiController@index')->name($slug.'.api.read');
-
-	Route::post('/create', $module.'ApiController@store')->name($slug.'.api.create');
-
-	Route::get('/show/{id}', $module.'ApiController@show')->name($slug.'.api.read');
-
-	Route::post('/update/{id}', $module.'ApiController@update')->name($slug.'.api.update');
-
-	Route::get('/delete/{id}', $module.'ApiController@destroy')->name($slug.'.api.delete');
-
+Route::middleware(['api', 'auth:sanctum'])->prefix('api/dummy-slug')->group(function () {
+    Route::get('/',            [DummyClass::class, 'index'])->name('api.dummy-slug.index');
+    Route::post('/',           [DummyClass::class, 'store'])->name('api.dummy-slug.store');
+    Route::get('/{dummySlug}',    [DummyClass::class, 'show'])->name('api.dummy-slug.show');
+    Route::put('/{dummySlug}',    [DummyClass::class, 'update'])->name('api.dummy-slug.update');
+    Route::delete('/{dummySlug}', [DummyClass::class, 'destroy'])->name('api.dummy-slug.destroy');
 });

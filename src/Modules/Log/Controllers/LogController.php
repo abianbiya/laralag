@@ -1,7 +1,7 @@
 <?php
 namespace Abianbiya\Laralag\Modules\Log\Controllers;
 
-use Form;
+
 use Illuminate\Http\Request;
 
 use App\Http\Controllers\Controller;
@@ -25,7 +25,7 @@ class LogController extends Controller
 		$query = Log::query();
 		if($request->has('search')){
 			$search = $request->get('search');
-			$query->whereAny(['User', 'Name', 'Aktivitas', 'Route', 'Action', 'Context', 'Data From', 'Data To', 'Ip Address', 'User Agent', ], 'like', "%$search%");
+			$query->whereAny(['user_id', 'name', 'aktivitas', 'route', 'action', 'context', 'data_from', 'data_to', 'ip_address', 'user_agent'], 'like', "%$search%");
 		}
 		$data['data'] = $query->paginate(10)->withQueryString();
 
@@ -54,7 +54,7 @@ class LogController extends Controller
 		return view('Log::log_create', array_merge($data, ['title' => $this->title]));
 	}
 
-	function store(Request $request)
+	public function store(Request $request)
 	{
 		$request->validate([
 			'user_id' => 'required|string',
@@ -121,7 +121,7 @@ class LogController extends Controller
 		return view('Log::log_update', array_merge($data, ['title' => $this->title]));
 	}
 
-	public function update(Request $request, $id)
+	public function update(Request $request, Log $log)
 	{
 		$request->validate([
 			'user_id' => 'required|string',
@@ -137,7 +137,7 @@ class LogController extends Controller
 			
 		]);
 		
-		$log = Log::find($id);
+
 		$log->user_id = $request->input("user_id");
         $log->name = $request->input("name");
         $log->aktivitas = $request->input("aktivitas");
@@ -156,9 +156,8 @@ class LogController extends Controller
 		return redirect()->route($request->back ?? 'log.index')->with('message_success', 'Log berhasil diubah!');
 	}
 
-	public function destroy(Request $request, $id)
+	public function destroy(Request $request, Log $log)
 	{
-		$log = Log::find($id);
 		$log->delete();
 
 		$text = 'menghapus '.$this->title;//.' '.$log->what;

@@ -1,7 +1,7 @@
 <?php
 namespace Abianbiya\Laralag\Modules\Permission\Controllers;
 
-use Form;
+
 use Abianbiya\Laralag\Helpers\Logger;
 use Illuminate\Http\Request;
 use Abianbiya\Laralag\Modules\Log\Models\Log;
@@ -26,7 +26,7 @@ class PermissionController extends Controller
 		$query = Permission::query();
 		if($request->has('search')){
 			$search = $request->get('search');
-			$query->whereAny(['Slug', 'Nama', 'Action', ], 'like', "%$search%");
+			$query->whereAny(['slug', 'nama', 'action'], 'like', "%$search%");
 		}
 		$data['data'] = $query->paginate(10)->withQueryString();
 
@@ -49,7 +49,7 @@ class PermissionController extends Controller
 		return view('Permission::permission_create', array_merge($data, ['title' => $this->title]));
 	}
 
-	function store(Request $request)
+	public function store(Request $request)
 	{
 		$request->validate([
 			'slug' => 'required|string',
@@ -98,7 +98,7 @@ class PermissionController extends Controller
 		return view('Permission::permission_update', array_merge($data, ['title' => $this->title]));
 	}
 
-	public function update(Request $request, $id)
+	public function update(Request $request, Permission $permission)
 	{
 		$request->validate([
 			'slug' => 'required|string',
@@ -108,7 +108,7 @@ class PermissionController extends Controller
 			
 		]);
 		
-		$permission = Permission::find($id);
+
 		$permission->slug = $request->input("slug");
         $permission->nama = $request->input("nama");
         $permission->action = $request->input("action");
@@ -121,9 +121,8 @@ class PermissionController extends Controller
 		return redirect()->route($request->back ?? 'permission.index')->with('message_success', 'Permission berhasil diubah!');
 	}
 
-	public function destroy(Request $request, $id)
+	public function destroy(Request $request, Permission $permission)
 	{
-		$permission = Permission::find($id);
 		$permission->delete();
 
 		$text = 'menghapus '.$this->title;//.' '.$permission->what;

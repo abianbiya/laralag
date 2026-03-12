@@ -10,5 +10,5 @@ Route::controller(LogController::class)->middleware(['web','auth'])->group(funct
 	Route::get('/log/{log}', 'show')->name('log.show')->middleware('permission:log.show');
 	Route::get('/log/{log}/edit', 'edit')->name('log.edit')->middleware('permission:log.edit');
 	Route::patch('/log/{log}', 'update')->name('log.update')->middleware('permission:log.update');
-	Route::get('/log/{log}/delete', 'destroy')->name('log.destroy')->middleware('permission:log.destroy');
+	Route::delete('/log/{log}', 'destroy')->name('log.destroy')->middleware('permission:log.destroy');
 });

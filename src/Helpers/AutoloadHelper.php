@@ -13,20 +13,11 @@ if (!function_exists('can')) {
 if (!function_exists('get')) {
     function get($what)
     {
-        switch ($what) {
-            case 'active_role':
-                $here = session('active_role')['role'];
-                break;
-            case 'active_role_id':
-                $here = session('active_role')['id'];
-                break;
-
-            default:
-                $here = '';
-                break;
-        }
-
-        return $here;
+        return match($what) {
+            'active_role' => session('active_role'),
+            'active_role_id' => session('active_role_id'),
+            default => session($what),
+        };
     }
 }
 

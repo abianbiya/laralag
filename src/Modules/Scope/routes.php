@@ -10,5 +10,5 @@ Route::controller(ScopeController::class)->middleware(['web','auth'])->group(fun
 	Route::get('/scope/{scope}', 'show')->name('scope.show')->middleware('permission:scope.show');
 	Route::get('/scope/{scope}/edit', 'edit')->name('scope.edit')->middleware('permission:scope.edit');
 	Route::patch('/scope/{scope}', 'update')->name('scope.update')->middleware('permission:scope.update');
-	Route::get('/scope/{scope}/delete', 'destroy')->name('scope.destroy')->middleware('permission:scope.destroy');
+	Route::delete('/scope/{scope}', 'destroy')->name('scope.destroy')->middleware('permission:scope.destroy');
 });

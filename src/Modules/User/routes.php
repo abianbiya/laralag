@@ -10,5 +10,5 @@ Route::controller(UserController::class)->middleware(['web','auth'])->group(func
 	Route::get('/user/{user}', 'show')->name('user.show')->middleware('permission:user.show');
 	Route::get('/user/{user}/edit', 'edit')->name('user.edit')->middleware('permission:user.edit');
 	Route::patch('/user/{user}', 'update')->name('user.update')->middleware('permission:user.update');
-	Route::get('/user/{user}/delete', 'destroy')->name('user.destroy')->middleware('permission:user.destroy');
+	Route::delete('/user/{user}', 'destroy')->name('user.destroy')->middleware('permission:user.destroy');
 });
