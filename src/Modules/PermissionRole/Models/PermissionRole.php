@@ -5,16 +5,17 @@ namespace Abianbiya\Laralag\Modules\PermissionRole\Models;
 use Abianbiya\Laralag\Traits\HasAuditTrail;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Abianbiya\Laralag\Modules\Permission\Models\Permission;
 use Abianbiya\Laralag\Modules\Role\Models\Role;
 
 
 class PermissionRole extends Model
 {
-	use SoftDeletes, HasUuids, HasAuditTrail;
+	use SoftDeletes, HasAuditTrail;
 
 	protected $table      = 'permission_role';
+	public $incrementing  = false;
+	protected $primaryKey = 'permission_id';
 	protected $fillable   = ['permission_id','role_id'];
 
 

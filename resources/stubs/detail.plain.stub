@@ -3,7 +3,7 @@
         {{ $title }}
     @endsection
 @section('content')
-<x-Laralag::breadcrumb :title='"Detail Data $title"' :crumbs="['dashboard.index' => 'Dashboard', 'NamaModule.index' => $title]" />
+<x-Laralag::breadcrumb :title="'Detail Data ' . $title" :crumbs="['dashboard.index' => 'Dashboard', 'NamaModule.index' => $title]" />
 <div class="row">
     <div class="col">
         <div class="table-responsive-md col-12">

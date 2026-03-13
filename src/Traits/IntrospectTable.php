@@ -36,6 +36,7 @@ trait IntrospectTable
                 'length' => $row->CHARACTER_MAXIMUM_LENGTH,
                 'catatan' => $row->COLUMN_COMMENT,
                 'is_primary' => $row->COLUMN_KEY == "PRI",
+                'column_type_raw' => $row->COLUMN_TYPE,
                 'referensi' => null,
                 'referensi_kolom' => null,
                 'referensi_desc_kolom' => null

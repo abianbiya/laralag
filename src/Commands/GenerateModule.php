@@ -24,13 +24,14 @@ class GenerateModule extends Command
     use IntrospectTable;
 
     protected $files;
-    protected $signature = 'lag:module {name} {--no-menu} {--menuOnly} {--api} {--table=} {--hasFile} {--force}';
+    protected $signature = 'lag:module {name} {--no-menu} {--menuOnly} {--api} {--table=} {--hasFile} {--force} {--columns=} {--searchable=} {--textarea=}';
     protected $description = 'Generate a full CRUD module (controller, model, views, routes, permissions) from a database table';
     protected $resourcePath;
     private $fields = [];
     private $types = [];
+    private $lengths = [];
     private $module = '';
-    
+
     private $hasFile = false;
 
     public $baseDir = __DIR__ . '/../../';
@@ -160,16 +161,16 @@ class GenerateModule extends Command
 
         // Ask if user wants to create a new menu or use existing
         $createNewMenu = confirm('Buat sebagai menu baru?', true);
-        
+
         if ($createNewMenu) {
             // Get menu details
             $menuName = text('Masukkan nama menu:', ucwords(str_replace('_', ' ', $moduleName)), ucwords(str_replace('_', ' ', $moduleName)));
             $menuNameEn = text('Masukkan nama menu (English):', ucwords(str_replace('_', ' ', $moduleName)), ucwords(str_replace('_', ' ', $moduleName)));
             $icon = text('Masukkan icon menu:', 'bi bi-list', 'bi bi-list');
-            
+
             // Get max order value
             $maxMenuOrder = Menu::where('menu_group_id', $menuGroupId)->max('urutan') ?? 0;
-            
+
             // Create the menu
             $menu = Menu::create([
                 'menu_group_id' => $menuGroupId,
@@ -185,16 +186,16 @@ class GenerateModule extends Command
             $menuId = select('Pilih menu untuk modul ini:', $menus);
             $menu = Menu::find($menuId);
         }
-        
+
         // Get routing for the module
         $routing = text('Masukkan routing untuk modul ini:', $moduleName . '.index', $moduleName . '.index');
-        
+
         // Create the module entry with the index permission
         $maxModuleOrder = Module::where('menu_id', $menu->id)->max('urutan') ?? 0;
-        
+
         // Use the index permission as the main permission for display
         $mainPermission = $permissions['index'];
-        
+
         // Create module entry
         Module::create([
             'menu_id' => $menu->id,
@@ -204,7 +205,7 @@ class GenerateModule extends Command
             'urutan' => $maxModuleOrder + 1,
             'is_tampil' => 1,
         ]);
-        
+
         $this->info('Menu dan module untuk ' . $moduleName . ' telah dibuat.');
     }
 
@@ -314,8 +315,13 @@ class GenerateModule extends Command
         $form_validation = '';
         $addRef          = '';
         $useRef          = '';
-        $nominalSanitizer= '';
-        $counter            = 0;
+        $counter         = 0;
+
+        // Phase 3.4: resolve searchable columns
+        $searchableOption = $this->option('searchable');
+        $searchableColumns = $searchableOption
+            ? array_map('trim', explode(',', $searchableOption))
+            : null;
 
         $fields = $this->getTableInfo($module, $this->option('table'));
 
@@ -324,7 +330,7 @@ class GenerateModule extends Command
         }
 
         $except_field = ['id', 'created_at', 'updated_at', 'deleted_at', 'created_by', 'updated_by', 'deleted_by'];
-        
+
         foreach ($fields['kolom'] as $key => $value) {
             if (!in_array($key, $except_field)) {
                 $form_add .= $this->genInputForm($key, (object) $value, false, $slug);
@@ -336,31 +342,51 @@ class GenerateModule extends Command
                     $useRef .= "use App\Modules" . "\\" . $kelasRef . "\Models" . "\\" . $kelasRef . ";" . PHP_EOL;
                 }
                 if ($value['tipe_data'] == 'tinyint') {
-                    $addRef .= '$ref_'.$key . ' = ["1" => "Ya", "0" => "Tidak"];' . PHP_EOL . "		";
-
+                    // Phase 4.2: use config for boolean labels
+                    $addRef .= '$ref_'.$key . ' = config("laralag.boolean_labels", ["1" => "Ya", "0" => "Tidak"]);' . PHP_EOL . "		";
                 }
+                // Phase 2.3: enum reference options
+                if ($value['tipe_data'] == 'enum' && !empty($value['column_type_raw'])) {
+                    preg_match_all("/'([^']+)'/", $value['column_type_raw'], $matches);
+                    if (!empty($matches[1])) {
+                        $enumOptions = [];
+                        foreach ($matches[1] as $enumVal) {
+                            $enumOptions[$enumVal] = Str::title(str_replace('_', ' ', $enumVal));
+                        }
+                        $optionsStr = var_export($enumOptions, true);
+                        $addRef .= '$ref_'.$key . ' = ' . $optionsStr . ';' . PHP_EOL . "		";
+                    }
+                }
+
                 $this->fields[] = $key;
                 $this->types[$key] = $value['tipe_data'];
+                // Phase 3.3: store lengths
+                $this->lengths[$key] = $value['length'] ?? null;
+
                 $label = Str::title(str_replace('_', ' ', str_replace('_id', '', $key)));
                 $column_title .= "'" . $label . "', ";
                 $ajax_field .= "'" . $key . "', ";
                 $shown_column .= $counter . ", ";
                 $counter++;
+
                 if ($value['tipe_data'] == 'bigint') {
-                $model_field .= "$" . $slug . "->" . $key . ' = str($request->input("' . $key . '"))->replace(".", "");
+                    $model_field .= "$" . $slug . "->" . $key . ' = str($request->input("' . $key . '"))->replace(".", "");
 		';
-                $type = "numeric";
-                }elseif($value['tipe_data'] == 'date'){
+                    $v_type = "numeric";
+                } elseif ($value['tipe_data'] == 'date' || $value['tipe_data'] == 'datetime') {
                     $model_field .= "$" . $slug . "->" . $key . ' = date("Y-m-d", strtotime($request->input("' . $key . '")));
         ';
-                $type = "date";
-                }else{
+                    $v_type = "date";
+                } else {
                     $model_field .= "$" . $slug . "->" . $key . ' = $request->input("' . $key . '");
         ';
-                $type = "string";
+                    $v_type = "string";
                 }
-                
-                $form_validation .= "'" . $key . "' => '". ($value['is_nullable'] ? 'nullable' : 'required') ."|".$type."'," . PHP_EOL . "			";
+
+                // Phase 4.1: enhanced validation rules
+                $v_rules = $value['is_nullable'] ? 'nullable' : 'required';
+                $v_rules .= '|' . $this->resolveValidationType($key, $value);
+                $form_validation .= "'" . $key . "' => '" . $v_rules . "'," . PHP_EOL . "			";
             }
         }
 
@@ -370,24 +396,103 @@ class GenerateModule extends Command
             $shown_column .= ($counter + 1) . ", ";
         }
 
-        if($this->hasFile){
+        if ($this->hasFile) {
             $formBody = 'html()->file("file")->class("form-control form-file")';
             $form_add .= "'file' => ['File', " . $formBody . "],";
-
             $form_edit .= "'file' => ['File', " . $formBody . "],";
         }
-        
+
+        // Phase 3.4: resolve searchable field list for whereAny()
+        if ($searchableColumns) {
+            $searchableStr = implode(', ', array_map(fn($c) => "'$c'", $searchableColumns));
+        } else {
+            $searchableStr = $ajax_field;
+        }
+
         $stub = str_replace('//Forms//', $form_add, $stub);
         $stub = str_replace('//FormsEdit//', $form_edit, $stub);
         $stub = str_replace('//ModelField//', $model_field, $stub);
         $stub = str_replace('"ColumnJudul"', $column_title, $stub);
         $stub = str_replace('"AjaxField"', $ajax_field, $stub);
-        $stub = str_replace('SearchableColumn', $ajax_field, $stub);
+        $stub = str_replace('SearchableColumn', $searchableStr, $stub);
         $stub = str_replace('//FormValidation//', $form_validation, $stub);
         $stub = str_replace('//FormReference//', $addRef, $stub);
         $stub = str_replace('//ImportReference//', $useRef, $stub);
 
         return $stub;
+    }
+
+    /**
+     * Phase 4.1: Resolve the validation type string for a field.
+     */
+    protected function resolveValidationType(string $fieldName, array $fieldInfo): string
+    {
+        $type = $fieldInfo['tipe_data'];
+        $length = $fieldInfo['length'] ?? null;
+
+        switch ($type) {
+            case 'tinyint':
+                return 'boolean';
+            case 'date':
+            case 'datetime':
+                return 'date';
+            case 'bigint':
+            case 'integer':
+                return 'numeric';
+            case 'text':
+                return 'string';
+            case 'enum':
+                // Extract enum values for in: rule
+                if (!empty($fieldInfo['column_type_raw'])) {
+                    preg_match_all("/'([^']+)'/", $fieldInfo['column_type_raw'], $matches);
+                    if (!empty($matches[1])) {
+                        return 'string|in:' . implode(',', $matches[1]);
+                    }
+                }
+                return 'string';
+            case 'varchar':
+            case 'char':
+            default:
+                $rules = [];
+                // Phase 4.1: email heuristic
+                if (str_contains(strtolower($fieldName), 'email')) {
+                    $rules[] = 'email';
+                } else {
+                    $rules[] = 'string';
+                }
+                // Phase 4.1: max length from column definition
+                if ($length) {
+                    $rules[] = 'max:' . $length;
+                }
+                return implode('|', $rules);
+        }
+    }
+
+    /**
+     * Phase 2.2: Resolve HTML5 input type based on field name pattern.
+     * Returns ['method' => string, 'type_attr' => string|null].
+     * 'type_attr' is set when the Spatie method name differs from the HTML type
+     * (e.g. html()->url() creates <a>, so we use html()->text()->attribute('type','url')).
+     */
+    protected function resolveInputMethod(string $fieldName): array
+    {
+        // Always use html()->text() as the base element since Spatie HTML's
+        // type-specific methods (email, tel, url, password) don't all support
+        // ->placeholder() and ->maxlength(). HTML5 type is set via ->attribute().
+        $lower = strtolower($fieldName);
+        if (str_contains($lower, 'email')) {
+            return ['method' => 'text', 'type_attr' => 'email'];
+        }
+        if (str_contains($lower, 'password') || str_contains($lower, 'passwd')) {
+            return ['method' => 'text', 'type_attr' => 'password'];
+        }
+        if (str_contains($lower, 'url') || str_contains($lower, 'website') || str_contains($lower, 'link')) {
+            return ['method' => 'text', 'type_attr' => 'url'];
+        }
+        if (str_contains($lower, 'phone') || str_contains($lower, 'telp') || str_contains($lower, 'no_hp') || str_contains($lower, 'hp')) {
+            return ['method' => 'text', 'type_attr' => 'tel'];
+        }
+        return ['method' => 'text', 'type_attr' => null];
     }
 
     protected function buildClassModel($name)
@@ -435,34 +540,63 @@ class GenerateModule extends Command
         $stub = $this->files->get($this->resourcePath . '/blade.plain.stub');
         $class = str_replace($this->getNamespace($name) . '\\', '', $name);
 
+        // Phase 3.1: resolve which columns to display
+        $columnsOption = $this->option('columns');
+        $displayColumns = $columnsOption
+            ? array_flip(array_map('trim', explode(',', $columnsOption)))
+            : null;
+
         $fields = '';
         $columns = '';
-        // dd($this->types);
+
         foreach ($this->types as $key => $value) {
+            // Phase 3.1: skip columns not in --columns list
+            if ($displayColumns !== null && !isset($displayColumns[$key])) {
+                continue;
+            }
+
             $isi = Str::of($key)->trim();
-            if(str($isi)->endsWith('_id')){
+            if (str($isi)->endsWith('_id')) {
                 $database = env('DB_DATABASE') ?: config('database.connections.' . config('database.default') . '.database');
                 $isi = str($isi)->replace('_id', '');
                 $relatedDescColumn = DB::select("SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ? AND DATA_TYPE IN ('varchar', 'char') AND COLUMN_NAME <> 'id' LIMIT 1", [$database, (string) $isi]);
                 $relatedDescColumn = $relatedDescColumn[0]->COLUMN_NAME ?? 'nama_'.$isi;
                 $isi = $isi->camel()->append('->')->append($relatedDescColumn);
             }
-            if($value == 'date'){
+
+            if ($value == 'date') {
                 $fields .= "<td>{{ tanggal(\$item->" . $isi . ") }}</td>" . PHP_EOL . "				";
-            }elseif($value == 'text'){
-                $fields .= "<td>{!! \$item->" . $isi . " !!}</td>" . PHP_EOL . "				";
-            }elseif($value == 'bigint'){
+            } elseif ($value == 'text') {
+                // Phase 1.2: XSS fix — strip HTML and truncate
+                $fields .= "<td>{{ Str::limit(strip_tags(\$item->" . $isi . "), 80) }}</td>" . PHP_EOL . "				";
+            } elseif ($value == 'bigint') {
                 $fields .= "<td>{!! rupiah(\$item->" . $isi . ") !!}</td>" . PHP_EOL . "				";
-            }else{
+            } elseif ($value == 'tinyint') {
+                // Phase 1.4: show Ya/Tidak instead of 0/1
+                $fields .= "<td>{{ \$item->" . $isi . " ? 'Ya' : 'Tidak' }}</td>" . PHP_EOL . "				";
+            } elseif ($value == 'enum') {
                 $fields .= "<td>{{ \$item->" . $isi . " }}</td>" . PHP_EOL . "				";
+            } else {
+                // Phase 3.3: truncate long varchar fields
+                $colLength = $this->lengths[$key] ?? null;
+                if ($colLength && $colLength > 100) {
+                    $fields .= "<td>{{ Str::limit(\$item->" . $isi . ", 60) }}</td>" . PHP_EOL . "				";
+                } else {
+                    $fields .= "<td>{{ \$item->" . $isi . " }}</td>" . PHP_EOL . "				";
+                }
             }
             $columns .= "<th scope=\"col\">" . Str::title(str_replace('_', ' ', str_replace('_id', '', $key))) . "</th>" . PHP_EOL . "			    ";
         }
 
+        // Count actual displayed columns for colspan
+        $displayedCount = $displayColumns !== null
+            ? count(array_intersect_key($this->types, $displayColumns))
+            : count($this->fields);
+
         $stub = str_replace('NamaModule', strtolower($class), $stub);
         $stub = str_replace('JudulKolom', $columns, $stub);
         $stub = str_replace('IsiKolom', $fields, $stub);
-        $stub = str_replace('JmlKolom', count($this->fields) + 2, $stub);
+        $stub = str_replace('JmlKolom', $displayedCount + 2, $stub);
         $stub = str_replace('', strtolower($class), $stub);
         return $stub;
     }
@@ -494,13 +628,16 @@ class GenerateModule extends Command
                 // Use the Eloquent relation method + description column
                 $relationMethod = Str::camel(str_replace('_id', '', $fieldName));
                 $descCol = $fieldInfo['referensi_desc_kolom'] ?? 'name';
-                $displayValue = "\\$$varName->{$relationMethod}->{$descCol}";
+                $displayValue = "\$$varName->{$relationMethod}->{$descCol}";
             } elseif ($fieldInfo['tipe_data'] === 'date') {
-                $displayValue = "{{ tanggal(\\$$varName->$fieldName) }}";
+                $displayValue = "{{ tanggal(\$$varName->$fieldName) }}";
             } elseif ($fieldInfo['tipe_data'] === 'bigint') {
-                $displayValue = "{!! rupiah(\\$$varName->$fieldName) !!}";
+                $displayValue = "{!! rupiah(\$$varName->$fieldName) !!}";
+            } elseif ($fieldInfo['tipe_data'] === 'tinyint') {
+                // Phase 1.5: show Ya/Tidak instead of 0/1
+                $displayValue = "{{ \$$varName->$fieldName ? 'Ya' : 'Tidak' }}";
             } else {
-                $displayValue = "{{ \\$$varName->$fieldName }}";
+                $displayValue = "{{ \$$varName->$fieldName }}";
             }
 
             // Wrap non-directive values in {{ }}
@@ -521,11 +658,15 @@ class GenerateModule extends Command
         $stub = $this->files->get($this->resourcePath . '/form.plain.stub');
         $class = str_replace($this->getNamespace($name) . '\\', '', $name);
 
+        // Phase 1.3: set enctype for file uploads
+        $enctype = $this->hasFile ? 'enctype="multipart/form-data"' : '';
+
         $stub = str_replace('NamaModule', strtolower($class), $stub);
         $stub = str_replace('AksiForm', $action == 'create' ? 'Tambah' : 'Edit', $stub);
         $stub = str_replace('FormAction', $action == 'create' ? 'store' : 'update', $stub);
         $stub = str_replace('FormParam', $action == 'create' ? '' : ', $' . strtolower($class) . '->id', $stub);
         $stub = str_replace('FormMethod', $action == 'create' ? '' : "@method('patch')", $stub);
+        $stub = str_replace('EncType', $enctype, $stub);
 
         return $stub;
     }
@@ -558,11 +699,20 @@ class GenerateModule extends Command
         if (in_array($field_name, $except_field)) return '';
 
         $formBody = '';
-        $formSize = 8;
 
-        $input_value = $is_edit ? "$" . $module . "->" . $field_name : 'old("' . $field_name . '")';
+        // Phase 1.1: always use old() with model fallback on edit forms
+        $input_value = $is_edit
+            ? 'old("' . $field_name . '", $' . $module . '->' . $field_name . ')'
+            : 'old("' . $field_name . '")';
+
         $is_required = $attributes->is_nullable ? [] : ['required' => true];
         $label = Str::title(str_replace('_', ' ', str_replace('_id', '', $field_name)));
+
+        // Phase 2.4: resolve plain textarea fields from --textarea option
+        $plainTextareas = [];
+        if ($this->option('textarea')) {
+            $plainTextareas = array_map('trim', explode(',', $this->option('textarea')));
+        }
 
         if ($attributes->referensi != null) {
             $addRef = 'ref_';
@@ -574,7 +724,9 @@ class GenerateModule extends Command
                     break;
 
                 case 'text':
-                    $formBody = 'html()->textarea("' . $field_name . '", ' . $input_value . ')->class("form-control rich-editor")';
+                    // Phase 2.4: plain textarea if field is in --textarea list
+                    $editorClass = in_array($field_name, $plainTextareas) ? 'form-control' : 'form-control rich-editor';
+                    $formBody = 'html()->textarea("' . $field_name . '", ' . $input_value . ')->class("' . $editorClass . '")';
                     break;
 
                 case 'bigint':
@@ -593,9 +745,19 @@ class GenerateModule extends Command
                     $formBody = 'html()->text("' . $field_name . '", ' . $input_value . ')->class("form-control datetimepicker")' . ($is_required ? '->required()' : '');
                     break;
 
+                case 'enum':
+                    // Phase 2.3: enum support — options pre-built in addRef, referenced via $ref_fieldname
+                    $formBody = 'html()->select("' . $field_name . '", $ref_' . $field_name . ', ' . $input_value . ')->class("form-select")' . ($is_required ? '->required()' : '');
+                    break;
+
                 case 'varchar':
                 case 'char':
-                    $formBody = 'html()->text("' . $field_name . '", ' . $input_value . ')->class("form-control")->placeholder("' . $attributes->catatan . '")' . ($is_required ? '->required()' : '');
+                    // Phase 2.1: maxlength from column length
+                    $maxLengthAttr = $attributes->length ? '->maxlength(' . $attributes->length . ')' : '';
+                    // Phase 2.2: HTML5 input type heuristics
+                    $resolved = $this->resolveInputMethod($field_name);
+                    $typeAttr = $resolved['type_attr'] ? '->attribute("type", "' . $resolved['type_attr'] . '")' : '';
+                    $formBody = 'html()->' . $resolved['method'] . '("' . $field_name . '", ' . $input_value . ')->class("form-control")->placeholder("' . $attributes->catatan . '")' . $typeAttr . $maxLengthAttr . ($is_required ? '->required()' : '');
                     break;
 
                 default:
@@ -604,7 +766,6 @@ class GenerateModule extends Command
             }
         }
 
-        
         $formBody = "'" . $field_name . "' => ['" . $label . "', " . $formBody . "],
             ";
 

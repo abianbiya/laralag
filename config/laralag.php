@@ -54,4 +54,14 @@ return [
      * Set to false if your app uses Tailwind or other CSS framework.
      */
     'use_bootstrap_pagination' => true,
+    /*
+     * Default number of items per page in generated index controllers.
+     * Can be overridden per-controller after generation.
+     */
+    'default_pagination' => 10,
+    /*
+     * Labels used for boolean (tinyint) fields in generated selects and views.
+     * Customize for your locale — e.g. ['1' => 'Yes', '0' => 'No'].
+     */
+    'boolean_labels' => ['1' => 'Ya', '0' => 'Tidak'],
 ];

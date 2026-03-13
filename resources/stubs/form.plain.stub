@@ -5,7 +5,7 @@
 @section('content')
 <x-Laralag::breadcrumb :title="$title" :crumbs="['dashboard.index' => 'Dashboard']" />
 <div class="mt-2">
-    <form action="{{ route('NamaModule.FormAction'FormParam) }}" method="POST" class="form">
+    <form action="{{ route('NamaModule.FormAction'FormParam) }}" method="POST" class="form" EncType>
         @csrf FormMethod
         @if(request()->get('back'))
             <input type="hidden" name="back" value="{{ request()->get('back') }}">
