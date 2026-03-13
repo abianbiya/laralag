@@ -84,7 +84,7 @@ class MenuTableSeeder extends Seeder
                 'updated_by' => NULL,
                 'deleted_by' => NULL,
             ),
-            7 => 
+            7 =>
             array (
                 'id' => '9c14979f-d3f9-4e2e-ab02-4a9ce3cf29c8',
                 'menu_group_id' => '9bfebe3e-4dfd-4f82-ab68-51c43994d7ad',
@@ -97,6 +97,38 @@ class MenuTableSeeder extends Seeder
                 'updated_at' => '2024-05-19 12:42:51',
                 'deleted_at' => NULL,
                 'created_by' => '9bfeaabc-c71a-442b-8bbb-8b76194ab72d',
+                'updated_by' => NULL,
+                'deleted_by' => NULL,
+            ),
+            8 =>
+            array (
+                'id' => 'c0000001-0000-4000-8000-000000000001',
+                'menu_group_id' => '9bfebe8a-96bb-4dfa-847d-58440d34f82f',
+                'nama' => 'Config Group',
+                'nama_en' => 'Config Group',
+                'icon' => 'bi bi-collection',
+                'urutan' => 1,
+                'is_tampil' => 1,
+                'created_at' => '2026-03-13 00:00:00',
+                'updated_at' => '2026-03-13 00:00:00',
+                'deleted_at' => NULL,
+                'created_by' => NULL,
+                'updated_by' => NULL,
+                'deleted_by' => NULL,
+            ),
+            9 =>
+            array (
+                'id' => 'c0000001-0000-4000-8000-000000000002',
+                'menu_group_id' => '9bfebe8a-96bb-4dfa-847d-58440d34f82f',
+                'nama' => 'Pengaturan',
+                'nama_en' => 'Settings',
+                'icon' => 'bi bi-gear',
+                'urutan' => 2,
+                'is_tampil' => 1,
+                'created_at' => '2026-03-13 00:00:00',
+                'updated_at' => '2026-03-13 00:00:00',
+                'deleted_at' => NULL,
+                'created_by' => NULL,
                 'updated_by' => NULL,
                 'deleted_by' => NULL,
             ),

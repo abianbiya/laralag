@@ -932,6 +932,165 @@ class PermissionRoleTableSeeder extends Seeder
                 'updated_by' => NULL,
                 'deleted_by' => NULL,
             ),
+            // config-group permissions (7 CRUD)
+            83 =>
+            array(
+                'permission_id' => 'b0000001-0000-4000-8000-000000000001',
+                'role_id' => '9c13f5cb-d4e0-45f2-9edb-1b4e633bb256',
+                'created_at' => NULL,
+                'updated_at' => NULL,
+                'deleted_at' => NULL,
+                'created_by' => NULL,
+                'updated_by' => NULL,
+                'deleted_by' => NULL,
+            ),
+            84 =>
+            array(
+                'permission_id' => 'b0000001-0000-4000-8000-000000000002',
+                'role_id' => '9c13f5cb-d4e0-45f2-9edb-1b4e633bb256',
+                'created_at' => NULL,
+                'updated_at' => NULL,
+                'deleted_at' => NULL,
+                'created_by' => NULL,
+                'updated_by' => NULL,
+                'deleted_by' => NULL,
+            ),
+            85 =>
+            array(
+                'permission_id' => 'b0000001-0000-4000-8000-000000000003',
+                'role_id' => '9c13f5cb-d4e0-45f2-9edb-1b4e633bb256',
+                'created_at' => NULL,
+                'updated_at' => NULL,
+                'deleted_at' => NULL,
+                'created_by' => NULL,
+                'updated_by' => NULL,
+                'deleted_by' => NULL,
+            ),
+            86 =>
+            array(
+                'permission_id' => 'b0000001-0000-4000-8000-000000000004',
+                'role_id' => '9c13f5cb-d4e0-45f2-9edb-1b4e633bb256',
+                'created_at' => NULL,
+                'updated_at' => NULL,
+                'deleted_at' => NULL,
+                'created_by' => NULL,
+                'updated_by' => NULL,
+                'deleted_by' => NULL,
+            ),
+            87 =>
+            array(
+                'permission_id' => 'b0000001-0000-4000-8000-000000000005',
+                'role_id' => '9c13f5cb-d4e0-45f2-9edb-1b4e633bb256',
+                'created_at' => NULL,
+                'updated_at' => NULL,
+                'deleted_at' => NULL,
+                'created_by' => NULL,
+                'updated_by' => NULL,
+                'deleted_by' => NULL,
+            ),
+            88 =>
+            array(
+                'permission_id' => 'b0000001-0000-4000-8000-000000000006',
+                'role_id' => '9c13f5cb-d4e0-45f2-9edb-1b4e633bb256',
+                'created_at' => NULL,
+                'updated_at' => NULL,
+                'deleted_at' => NULL,
+                'created_by' => NULL,
+                'updated_by' => NULL,
+                'deleted_by' => NULL,
+            ),
+            89 =>
+            array(
+                'permission_id' => 'b0000001-0000-4000-8000-000000000007',
+                'role_id' => '9c13f5cb-d4e0-45f2-9edb-1b4e633bb256',
+                'created_at' => NULL,
+                'updated_at' => NULL,
+                'deleted_at' => NULL,
+                'created_by' => NULL,
+                'updated_by' => NULL,
+                'deleted_by' => NULL,
+            ),
+            // config.index
+            90 =>
+            array(
+                'permission_id' => 'b0000001-0000-4000-8000-000000000008',
+                'role_id' => '9c13f5cb-d4e0-45f2-9edb-1b4e633bb256',
+                'created_at' => NULL,
+                'updated_at' => NULL,
+                'deleted_at' => NULL,
+                'created_by' => NULL,
+                'updated_by' => NULL,
+                'deleted_by' => NULL,
+            ),
+            // config-general permissions
+            91 =>
+            array(
+                'permission_id' => 'b0000001-0000-4000-8000-000000000009',
+                'role_id' => '9c13f5cb-d4e0-45f2-9edb-1b4e633bb256',
+                'created_at' => NULL,
+                'updated_at' => NULL,
+                'deleted_at' => NULL,
+                'created_by' => NULL,
+                'updated_by' => NULL,
+                'deleted_by' => NULL,
+            ),
+            92 =>
+            array(
+                'permission_id' => 'b0000001-0000-4000-8000-000000000010',
+                'role_id' => '9c13f5cb-d4e0-45f2-9edb-1b4e633bb256',
+                'created_at' => NULL,
+                'updated_at' => NULL,
+                'deleted_at' => NULL,
+                'created_by' => NULL,
+                'updated_by' => NULL,
+                'deleted_by' => NULL,
+            ),
+            // config-display permissions
+            93 =>
+            array(
+                'permission_id' => 'b0000001-0000-4000-8000-000000000011',
+                'role_id' => '9c13f5cb-d4e0-45f2-9edb-1b4e633bb256',
+                'created_at' => NULL,
+                'updated_at' => NULL,
+                'deleted_at' => NULL,
+                'created_by' => NULL,
+                'updated_by' => NULL,
+                'deleted_by' => NULL,
+            ),
+            94 =>
+            array(
+                'permission_id' => 'b0000001-0000-4000-8000-000000000012',
+                'role_id' => '9c13f5cb-d4e0-45f2-9edb-1b4e633bb256',
+                'created_at' => NULL,
+                'updated_at' => NULL,
+                'deleted_at' => NULL,
+                'created_by' => NULL,
+                'updated_by' => NULL,
+                'deleted_by' => NULL,
+            ),
+            // config-auth permissions
+            95 =>
+            array(
+                'permission_id' => 'b0000001-0000-4000-8000-000000000013',
+                'role_id' => '9c13f5cb-d4e0-45f2-9edb-1b4e633bb256',
+                'created_at' => NULL,
+                'updated_at' => NULL,
+                'deleted_at' => NULL,
+                'created_by' => NULL,
+                'updated_by' => NULL,
+                'deleted_by' => NULL,
+            ),
+            96 =>
+            array(
+                'permission_id' => 'b0000001-0000-4000-8000-000000000014',
+                'role_id' => '9c13f5cb-d4e0-45f2-9edb-1b4e633bb256',
+                'created_at' => NULL,
+                'updated_at' => NULL,
+                'deleted_at' => NULL,
+                'created_by' => NULL,
+                'updated_by' => NULL,
+                'deleted_by' => NULL,
+            ),
         ));
     }
 }

@@ -16,10 +16,13 @@ class LaralagSeeder extends Seeder
 		$this->call(UsersTableSeeder::class);
 		$this->call(RoleTableSeeder::class);
 		$this->call(PermissionTableSeeder::class);
+		$this->call(ConfigPermissionTableSeeder::class);
 		$this->call(MenuTableSeeder::class);
 		$this->call(MenuGroupTableSeeder::class);
 		$this->call(ModuleTableSeeder::class);
 		$this->call(PermissionRoleTableSeeder::class);
 		$this->call(RoleUserTableSeeder::class);
+		$this->call(ConfigGroupTableSeeder::class);
+		$this->call(ConfigTableSeeder::class);
 	}
 }

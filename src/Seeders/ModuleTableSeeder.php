@@ -115,7 +115,7 @@ class ModuleTableSeeder extends Seeder
                 'updated_by' => NULL,
                 'deleted_by' => NULL,
             ),
-            8 => 
+            8 =>
             array (
                 'id' => '9c1497b1-e58a-42f9-8b40-3649d56cdbb6',
                 'menu_id' => '9c14979f-d3f9-4e2e-ab02-4a9ce3cf29c8',
@@ -128,6 +128,38 @@ class ModuleTableSeeder extends Seeder
                 'updated_at' => '2024-05-19 12:43:02',
                 'deleted_at' => NULL,
                 'created_by' => '9bfeaabc-c71a-442b-8bbb-8b76194ab72d',
+                'updated_by' => NULL,
+                'deleted_by' => NULL,
+            ),
+            9 =>
+            array (
+                'id' => 'c0000002-0000-4000-8000-000000000001',
+                'menu_id' => 'c0000001-0000-4000-8000-000000000001',
+                'nama' => 'Config Group',
+                'routing' => 'config-group.index',
+                'permission' => 'config-group.index',
+                'urutan' => 1,
+                'is_tampil' => 1,
+                'created_at' => '2026-03-13 00:00:00',
+                'updated_at' => '2026-03-13 00:00:00',
+                'deleted_at' => NULL,
+                'created_by' => NULL,
+                'updated_by' => NULL,
+                'deleted_by' => NULL,
+            ),
+            10 =>
+            array (
+                'id' => 'c0000002-0000-4000-8000-000000000002',
+                'menu_id' => 'c0000001-0000-4000-8000-000000000002',
+                'nama' => 'Pengaturan',
+                'routing' => 'config.index',
+                'permission' => 'config.index',
+                'urutan' => 1,
+                'is_tampil' => 1,
+                'created_at' => '2026-03-13 00:00:00',
+                'updated_at' => '2026-03-13 00:00:00',
+                'deleted_at' => NULL,
+                'created_by' => NULL,
                 'updated_by' => NULL,
                 'deleted_by' => NULL,
             ),

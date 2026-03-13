@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 
 if (!function_exists('can')) {
@@ -99,5 +100,18 @@ if (!function_exists('rupiah')) {
     function rupiah($nominal)
     {
         return empty($nominal) ? '' : 'Rp ' . number_format($nominal, 0, ',', '.');
+    }
+}
+
+if (!function_exists('setting')) {
+    function setting($key, $default = null)
+    {
+        $configs = Cache::remember('laralag-config', 3600, function () {
+            return \Abianbiya\Laralag\Modules\Config\Models\Config::all()
+                ->keyBy('key')
+                ->map(fn($c) => $c->value)
+                ->toArray();
+        });
+        return $configs[$key] ?? $default;
     }
 }
