@@ -23,12 +23,13 @@ class PermissionController extends Controller
 
 	public function index(Request $request)
 	{
-		$query = Permission::query();
-		if($request->has('search')){
-			$search = $request->get('search');
-			$query->whereAny(['slug', 'nama', 'action'], 'like', "%$search%");
+		$query = Permission::query()->orderBy('group')->orderBy('action');
+		if ($request->filled('search')) {
+			$query->where('group', 'like', '%' . $request->get('search') . '%');
 		}
-		$data['data'] = $query->paginate(10)->withQueryString();
+		$all = $query->get();
+		$data['groups'] = $all->groupBy('group');
+		$data['totalPermissions'] = $all->count();
 
 		$this->log($request, 'melihat halaman manajemen data '.$this->title);
 		return view('Permission::permission', array_merge($data, ['title' => $this->title]));
